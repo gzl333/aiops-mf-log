@@ -3,6 +3,7 @@
   "name": "@cnic/log",
   "appId": "log",
   "defaultPort": 9040,
+  "appPath": "/my/log",
   "description": "Micro Frontend",
   "productName": "Micro Frontend",
   "author": "mimas",

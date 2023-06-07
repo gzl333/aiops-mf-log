@@ -5,6 +5,8 @@ import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
+import { logs } from 'src/configs/logs'
+
 // const props = defineProps({
 //   foo: {
 //     type: String,
@@ -21,9 +23,9 @@ const tc = i18n.global.tc
 
 const activeItem = computed(() => store.items.currentPath[0])
 
-const appVersion = process.env.appVersion
-const releaseTime = process.env.releaseTime
-
+const appPath = process.env.appPath as string
+const releaseTime = process.env.releaseTime as string
+const appVersion = logs[0].version
 </script>
 
 <template>
@@ -45,7 +47,7 @@ const releaseTime = process.env.releaseTime
             <q-item
               clickable
               :active="activeItem === 'service1'"
-              @click="navigateToUrl('/my/log/service1')"
+              @click="navigateToUrl(appPath + '/service1')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
@@ -57,7 +59,7 @@ const releaseTime = process.env.releaseTime
             <q-item
               clickable
               :active="activeItem === 'service2'"
-              @click="navigateToUrl('/my/log/service2')"
+              @click="navigateToUrl(appPath + '/service2')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
@@ -69,7 +71,11 @@ const releaseTime = process.env.releaseTime
           </q-list>
 
           <div class="row justify-center q-pt-lg">
-            <q-icon class="text-center" name="info" color="grey-4" size="xs">
+            <q-icon class="text-center cursor-pointer"
+                    name="info"
+                    size="xs"
+                    :color="activeItem === 'about' ? 'primary' : 'grey-4'"
+                    @click="navigateToUrl(appPath + '/about')">
               <q-tooltip class="bg-grey-3">
                 <div class="text-grey text-caption text-center">{{ tc('appVersion') }}</div>
                 <div class="text-grey text-caption text-center">
