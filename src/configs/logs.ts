@@ -1,6 +1,18 @@
 // 更新日志内容，版本降序排列
 export const logs = [
   {
+    version: 'v0.0.4',
+    date: '2023-06-07',
+    time: '15:46:09',
+    release_author: 'zhjiang123',
+    updates: [
+      {
+        info: '设计与划分日志页面，设计总体路由布局',
+        commit_author: 'zhjiang123'
+      }
+    ]
+  },
+  {
     version: 'v0.0.3',
     date: '2023-06-07',
     time: '14:09:09',

@@ -43,28 +43,28 @@ const appVersion = logs[0].version
                 {{ tc('日志') }}
               </q-item-section>
             </q-item>
-
             <q-item
               clickable
-              :active="activeItem === 'service1'"
-              @click="navigateToUrl(appPath + '/service1')"
+              :active="activeItem === 'dns'"
+              @click="navigateToUrl(appPath + '/dns')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="las la-video" size="lg"/>
-                <div class="active-text text-center">{{ tc('服务1') }}</div>
+                <div class="active-text text-center">{{ tc('dns') }}</div>
               </q-item-section>
             </q-item>
 
             <q-item
               clickable
-              :active="activeItem === 'service2'"
-              @click="navigateToUrl(appPath + '/service2')"
+              :active="activeItem === 'nginx'"
+              @click="navigateToUrl(appPath + '/nginx')"
               active-class="active-item"
+              disable
             >
               <q-item-section class="column items-center">
                 <q-icon name="las la-server" size="lg"/>
-                <div class="active-text text-center">{{ tc('服务2') }}</div>
+                <div class="active-text text-center">{{ tc('nginx') }}</div>
               </q-item-section>
             </q-item>
 
