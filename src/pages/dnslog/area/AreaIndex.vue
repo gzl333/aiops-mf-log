@@ -4,7 +4,7 @@ console.log(2)
 
 <template>
   <div class="Service2Page">
-    this is dns areaqq
+    this is DNS Area
   </div>
 </template>
 

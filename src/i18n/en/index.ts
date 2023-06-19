@@ -8,5 +8,6 @@ export default {
   trajectory: 'User Trajectory',
   area: 'User Area',
   dns: 'Dns Log',
-  nginx: 'Nginx Log'
+  nginx: 'Nginx Log',
+  logList: 'Log List'
 }
