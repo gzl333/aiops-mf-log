@@ -12,11 +12,11 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'dns',
         component: () => import('pages/dnslog/dnsLogIndex.vue'),
-        redirect: '/my/log/dns/realtime',
+        redirect: '/my/log/dns/list',
         children: [
           {
-            path: 'realtime',
-            component: () => import('pages/dnslog/realtime/RealTimeDataIndex.vue')
+            path: 'list',
+            component: () => import('pages/dnslog/List/dnsLogList.vue')
           },
           {
             path: 'trajectory',
@@ -35,11 +35,11 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'nginx',
         component: () => import('pages/nginxlog/nginxLogIndex.vue'),
-        redirect: '/my/log/nginx/realtime',
+        redirect: '/my/log/nginx/list',
         children: [
           {
-            path: 'realtime',
-            component: () => import('pages/nginxlog/realtime/RealTimeDataIndex.vue')
+            path: 'list',
+            component: () => import('pages/nginxlog/list/nginxLogList.vue')
           },
           {
             path: 'trajectory',
@@ -47,7 +47,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'area',
-            component: () => import('pages/nginxlog/trajectory/TrajectoryIndex.vue')
+            component: () => import('pages/nginxlog/area/AreaIndex.vue')
           }]
       }]
   },
