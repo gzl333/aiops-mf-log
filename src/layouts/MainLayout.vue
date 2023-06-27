@@ -37,7 +37,17 @@ const appVersion = logs[0].version
                 <div class="active-text text-center">{{ tc('dns') }}</div>
               </q-item-section>
             </q-item>
-
+            <q-item
+              clickable
+              :active="activeItem === 'nat'"
+              @click="navigateToUrl(appPath + '/nat')"
+              active-class="active-item"
+            >
+              <q-item-section class="column items-center">
+                <q-icon name="las la-video" size="lg"/>
+                <div class="active-text text-center">{{ tc('nat') }}</div>
+              </q-item-section>
+            </q-item>
             <q-item
               clickable
               :active="activeItem === 'nginx'"

@@ -55,6 +55,7 @@ import { logs } from 'src/configs/logs'
             <div class="col-auto">*</div>
             <div class="col-auto text-grey-8">{{ update.info }}</div>
             <div class="col-auto text-grey-8">提交人: {{ update.commit_author }}</div>
+            <div class="col-auto text-grey-8">指导设计: {{ update.design_author }}</div>
           </div>
 
         </div>

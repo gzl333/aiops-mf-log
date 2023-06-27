@@ -9,5 +9,6 @@ export default {
   area: 'User Area',
   dns: 'Dns Log',
   nginx: 'Nginx Log',
-  logList: 'Log List'
+  logList: 'Log List',
+  nat: 'Nat Log'
 }

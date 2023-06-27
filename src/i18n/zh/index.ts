@@ -9,5 +9,6 @@ export default {
   area: '用户区域',
   dns: 'Dns日志',
   nginx: '对象存储日志',
-  logList: '日志列表'
+  logList: '日志列表',
+  nat: 'Nat日志'
 }

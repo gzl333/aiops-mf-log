@@ -27,6 +27,16 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/dnslog/area/AreaIndex.vue')
           }]
       },
+      {
+        path: 'nat',
+        component: () => import('pages/NatLog/natLogIndex.vue'),
+        redirect: '/my/log/nat/list',
+        children: [
+          {
+            path: 'list',
+            component: () => import('pages/NatLog/natLogList.vue')
+          }]
+      },
       // @mimas: about, updates, releases...
       {
         path: 'about',
