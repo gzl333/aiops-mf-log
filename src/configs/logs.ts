@@ -1,6 +1,22 @@
 // 更新日志内容，版本降序排列
 export const logs = [
   {
+    version: 'v0.0.6',
+    date: '2023-06-26',
+    time: '16:00:09',
+    release_author: 'zhjiang123',
+    updates: [
+      {
+        info: 'nginx日志名称更正',
+        commit_author: '张海明'
+      },
+      {
+        info: 'nginx日志页面布局更正',
+        commit_author: 'zhjiang123'
+      }
+    ]
+  },
+  {
     version: 'v0.0.5',
     date: '2023-06-19',
     time: '16:30:09',

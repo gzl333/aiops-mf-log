@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'stores/store'
 import { useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
@@ -29,7 +29,6 @@ const changeTab = async (name: string) => {
               <div class="col-auto row items-end text-h6 q-px-none">
                 DNS日志
               </div>
-
             </div>
 
             <div class="row">
@@ -43,12 +42,6 @@ const changeTab = async (name: string) => {
                 >
                   <q-tab no-caps name="list" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('logList')"
                          icon="lab la-bitbucket" @click="changeTab('list')">
-                  </q-tab>
-                  <q-tab no-caps name="trajectory" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('trajectory')"
-                         icon="las la-user-alt" @click="changeTab('trajectory')">
-                  </q-tab>
-                  <q-tab no-caps name="area" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('area')"
-                         icon="las la-user-alt" @click="changeTab('area')">
                   </q-tab>
                 </q-tabs>
               </div>
