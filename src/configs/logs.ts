@@ -3,12 +3,39 @@ export const logs = [
   {
     version: 'v0.0.7',
     date: '2023-06-27',
+    time: '17:00:09',
+    release_author: '姜子涵',
+    updates: [
+      {
+        info: 'DNS日志列表',
+        commit_author: '姜子涵',
+        feat_author: '王悦',
+        design_author: '张海明'
+      },
+      {
+        info: '对象存储日志列表',
+        commit_author: '姜子涵',
+        feat_author: '赵万福',
+        design_author: '张海明'
+      },
+      {
+        info: 'nat日志列表',
+        commit_author: '姜子涵',
+        feat_author: '姜子涵',
+        design_author: '张海明'
+      }
+    ]
+  },
+  {
+    version: 'v0.0.7',
+    date: '2023-06-27',
     time: '15:00:09',
     release_author: 'zhjiang123',
     updates: [
       {
         info: 'nat日志初始页面',
         commit_author: 'zhjiang123',
+        feat_author: 'zhjiang123',
         design_author: '张海明'
       }
     ]

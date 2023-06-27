@@ -54,6 +54,7 @@ import { logs } from 'src/configs/logs'
           <div v-for="update in log.updates" :key="update.info" class="row items-center q-gutter-md q-pl-lg">
             <div class="col-auto">*</div>
             <div class="col-auto text-grey-8">{{ update.info }}</div>
+            <div class="col-auto text-grey-8">开发者: {{ update.feat_author }}</div>
             <div class="col-auto text-grey-8">提交人: {{ update.commit_author }}</div>
             <div class="col-auto text-grey-8">指导设计: {{ update.design_author }}</div>
           </div>
@@ -77,6 +78,7 @@ import { logs } from 'src/configs/logs'
           <div v-for="update in log.updates" :key="update.info" class="row items-center q-gutter-md q-pl-lg">
             <div class="col-auto">*</div>
             <div class="col-auto text-grey-8">{{ update.info }}</div>
+            <div class="col-auto text-grey-8">开发者: {{ update.feat_author }}</div>
             <div class="col-auto text-grey-8">提交人: {{ update.commit_author }}</div>
           </div>
 
