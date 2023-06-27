@@ -30,7 +30,7 @@ const dateFrom = ref(startDate)
 const dateTo = ref(currentDate)
 // 排序方法与变量
 const sortType = ref('集群分类')
-const nginxLogTableRow = ref([{
+const info = {
   sort: 1,
   remote_ip: '123.23.23.0',
   local_ip: '235.234.22.0',
@@ -40,34 +40,50 @@ const nginxLogTableRow = ref([{
   down_stream: '12222',
   status: '200',
   bucket_name: 'bucket02'
-}, {
-  sort: 2,
-  remote_ip: '125.23.23.0',
-  local_ip: '215.234.22.0',
-  creation_time: '2023-07-08',
-  request_info: 'Post/example.html HTTP/1.1',
-  upload_stream: '9994',
-  down_stream: '888882',
-  status: '500',
-  bucket_name: 'bucket01'
-}])
+}
+const arr1: Array<any> = []
+for (let i = 0; i < 20; i++) {
+  arr1.push(info)
+}
+const nginxLogTableRow = ref(arr1)
+// const nginxLogTableRow = ref([{
+//   sort: 1,
+//   remote_ip: '123.23.23.0',
+//   local_ip: '235.234.22.0',
+//   creation_time: '2023-07-08',
+//   request_info: 'GET/example.html HTTP/1.1',
+//   upload_stream: '1234',
+//   down_stream: '12222',
+//   status: '200',
+//   bucket_name: 'bucket02'
+// }, {
+//   sort: 2,
+//   remote_ip: '125.23.23.0',
+//   local_ip: '215.234.22.0',
+//   creation_time: '2023-07-08',
+//   request_info: 'Post/example.html HTTP/1.1',
+//   upload_stream: '9994',
+//   down_stream: '888882',
+//   status: '500',
+//   bucket_name: 'bucket01'
+// }])
 // 数据表字段设计
 const nginxLogColumns = computed(() => [
   { name: 'sort', label: '序号', align: 'center' },
-  { name: 'remote_ip', label: '远端IP', align: 'center' },
-  { name: 'local_ip', label: '本地IP', align: 'center' },
+  { name: 'remote_ip', label: '用户IP', align: 'center' },
+  { name: 'local_ip', label: '服务IP', align: 'center' },
   { name: 'creation_time', label: '时间', align: 'center' },
   { name: 'request_info', label: '请求行', align: 'center' },
-  { name: 'upload_stream', label: '上传大小', align: 'center' },
-  { name: 'down_stream', label: '下行大小', align: 'center' },
+  { name: 'upload_stream', label: '上行流量', align: 'center' },
+  { name: 'down_stream', label: '下行流量', align: 'center' },
   { name: 'status', label: '状态', align: 'center' },
   { name: 'bucket_name', label: '桶名称', align: 'center' }
 ])
 // 分页表变量
 const paginationTable = ref({
-  page: 1,
-  count: 0,
-  rowsPerPage: 10
+  page: 2,
+  count: 20,
+  rowsPerPage: 5
 })
 // 饼状图
 </script>
@@ -83,7 +99,7 @@ const paginationTable = ref({
                           <div class="q-pa-md">
                             <div class="q-gutter-md row items-start">
                               <q-date v-model="dateFrom" mask="YYYY-MM-DD HH:mm" @update:model-value="selectDate" />
-                              <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" />
+                              <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm"/>
                             </div>
           <!--                <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >-->
           <!--                  <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" color="purple" />-->
@@ -103,11 +119,23 @@ const paginationTable = ref({
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
                         <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                          <q-date minimal v-model="dateTo" @update:model-value="selectDate" >
-                            <div class="row items-center justify-end">
-                              <q-btn v-close-popup label="确定" color="primary" flat/>
+<!--                          <q-date minimal v-model="dateTo" @update:model-value="selectDate" >-->
+<!--                            <div class="row items-center justify-end">-->
+<!--                              <q-btn v-close-popup label="确定" color="primary" flat/>-->
+<!--                            </div>-->
+<!--                          </q-date>-->
+                            <div class="q-pa-md">
+                              <div class="q-gutter-md row items-start">
+                                <q-date v-model="dateTo" mask="YYYY-MM-DD HH:mm" @update:model-value="selectDate" />
+                                <q-time v-model="dateTo" mask="YYYY-MM-DD HH:mm" />
+                              </div>
+            <!--                <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >-->
+            <!--                  <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" color="purple" />-->
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="确定" color="primary" flat/>
+                              </div>
                             </div>
-                          </q-date>
+          <!--                </q-date>-->
                         </q-popup-proxy>
                       </q-icon>
                     </template>
@@ -178,25 +206,25 @@ const paginationTable = ref({
                   </template>
                   <template v-slot:top-right>
                     <div class="col-auto row items-center q-gutter-x-xs">
-                      <q-btn
-                        class="col-auto"
-                        color="primary"
-                        flat
-                        :label="'导出当页数据'"
-                        no-caps
-                        dense
-                        @click="exportTable()"
-                      />
-                      <q-btn
-                        class="col-auto"
-                        color="primary"
-                        flat
-                        :label="'导出全部数据'"
-                        no-caps
-                        dense
-                        @click="exportAllTable"
-                      />
-                      <span class="text-grey"> (注: 限制导出最大记录数为 1000)</span>
+<!--                      <q-btn-->
+<!--                        class="col-auto"-->
+<!--                        color="primary"-->
+<!--                        flat-->
+<!--                        :label="'导出当页数据'"-->
+<!--                        no-caps-->
+<!--                        dense-->
+<!--                        @click="exportTable()"-->
+<!--                      />-->
+<!--                      <q-btn-->
+<!--                        class="col-auto"-->
+<!--                        color="primary"-->
+<!--                        flat-->
+<!--                        :label="'导出全部数据'"-->
+<!--                        no-caps-->
+<!--                        dense-->
+<!--                        @click="exportAllTable"-->
+<!--                      />-->
+<!--                      <span class="text-grey"> (注: 限制导出最大记录数为 1000)</span>-->
                     </div>
                   </template>
                 </q-table>
