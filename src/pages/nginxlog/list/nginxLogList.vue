@@ -2,23 +2,34 @@
 import { ref, computed } from 'vue'
 import { getNowFormatDate, payRecordUtcToBeijing } from '../../../hooks/processTime'
 // 时间选择器 数据与方法
-const currentDate = getNowFormatDate(1)
+// const currentDate = getNowFormatDate(1)
 const date = new Date()
-date.setHours(date.getHours(), date.getMinutes() - date.getTimezoneOffset())
+// date.setHours(date.getHours(), date.getMinutes() - date.getTimezoneOffset())
 date.setMonth(date.getMonth())
+date.setMinutes(date.getMinutes() - 10)
 const date2 = new Date()
-date2.setMonth(date2.getMonth() - 1)
-const startDate = payRecordUtcToBeijing(date2.toISOString())
+// date2.setMonth(date2.getMonth() - 1)
+// const startDate = payRecordUtcToBeijing(date2.toISOString())
 function setDateFrom (setTime:string) {
   return setTime.split('T')[0]
 }
 function setDateTO (setTime:string) {
   return setTime.split('T')[0]
 }
+function formatDateTime (date:Date): string {
+  const year = date.getFullYear().toString().padStart(4, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}`
+}
+const startDate = formatDateTime(date)
+const currentDate = formatDateTime(date2)
 const dateFrom = ref(startDate)
 const dateTo = ref(currentDate)
 // 排序方法与变量
-const sortType = ref('排序方式')
+const sortType = ref('集群分类')
 const nginxLogTableRow = ref([{
   sort: 1,
   remote_ip: '123.23.23.0',
@@ -27,7 +38,8 @@ const nginxLogTableRow = ref([{
   request_info: 'GET/example.html HTTP/1.1',
   upload_stream: '1234',
   down_stream: '12222',
-  status: '200'
+  status: '200',
+  bucket_name: 'bucket02'
 }, {
   sort: 2,
   remote_ip: '125.23.23.0',
@@ -36,7 +48,8 @@ const nginxLogTableRow = ref([{
   request_info: 'Post/example.html HTTP/1.1',
   upload_stream: '9994',
   down_stream: '888882',
-  status: '500'
+  status: '500',
+  bucket_name: 'bucket01'
 }])
 // 数据表字段设计
 const nginxLogColumns = computed(() => [
@@ -47,7 +60,8 @@ const nginxLogColumns = computed(() => [
   { name: 'request_info', label: '请求行', align: 'center' },
   { name: 'upload_stream', label: '上传大小', align: 'center' },
   { name: 'down_stream', label: '下行大小', align: 'center' },
-  { name: 'status', label: '状态', align: 'center' }
+  { name: 'status', label: '状态', align: 'center' },
+  { name: 'bucket_name', label: '桶名称', align: 'center' }
 ])
 // 分页表变量
 const paginationTable = ref({
@@ -62,15 +76,22 @@ const paginationTable = ref({
   <div class="Service1Page">
               <div class="row justify-start">
                 <div class="col-2">
-                  <q-input filled dense v-model="dateFrom" mask="date" >
+                  <q-input filled dense v-model="dateFrom" mask="datetime" >
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale" >`
-                          <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >
+                        <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale" >
+                          <div class="q-pa-md">
+                            <div class="q-gutter-md row items-start">
+                              <q-date v-model="dateFrom" mask="YYYY-MM-DD HH:mm" @update:model-value="selectDate" />
+                              <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" />
+                            </div>
+          <!--                <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >-->
+          <!--                  <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" color="purple" />-->
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="确定" color="primary" flat/>
                             </div>
-                          </q-date>
+                          </div>
+          <!--                </q-date>-->
                         </q-popup-proxy>
                       </q-icon>
                     </template>
@@ -78,7 +99,7 @@ const paginationTable = ref({
                 </div>
                 <div class="text-center q-mx-md q-pt-md">至</div>
                 <div class="col-2 q-mr-md">
-                  <q-input filled dense v-model="dateTo" mask="date">
+                  <q-input filled dense v-model="dateTo" mask="datetime">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
                         <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
@@ -97,23 +118,28 @@ const paginationTable = ref({
                     <q-list>
                       <q-item clickable v-close-popup>
                         <q-item-section>
-                          <q-item-label>IP排序</q-item-label>
+                          <q-item-label>怀柔中心</q-item-label>
                         </q-item-section>
                       </q-item>
                       <q-item clickable v-close-popup>
                         <q-item-section>
-                          <q-item-label>上传量排序</q-item-label>
+                          <q-item-label>软件园区</q-item-label>
                         </q-item-section>
                       </q-item>
                       <q-item clickable v-close-popup>
                         <q-item-section>
-                          <q-item-label>下行量排序</q-item-label>
+                          <q-item-label>网络中心</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup>
+                        <q-item-section>
+                          <q-item-label>唐家岭</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
                   <div class="text-grey-6 col-9 q-mt-md q-pl-md">
-                    <span> 声明: 相关接口正在研发中，本页面暂时使用静态数据</span>
+                  <span> 声明: 相关接口正在研发中，本页面暂时使用静态数据</span>
                   </div>
                 </div>
               </div>
@@ -147,6 +173,7 @@ const paginationTable = ref({
                       <q-td class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>
                       <q-td class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>
                       <q-td class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>
+                      <q-td class="no-padding" key="status" :props="props">{{ props.row.bucket_name}}</q-td>
                     </q-tr>
                   </template>
                   <template v-slot:top-right>

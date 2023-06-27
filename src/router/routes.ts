@@ -50,15 +50,8 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'list',
             component: () => import('pages/nginxlog/list/nginxLogList.vue')
-          },
-          {
-            path: 'trajectory',
-            component: () => import('pages/nginxlog/trajectory/TrajectoryIndex.vue')
-          },
-          {
-            path: 'area',
-            component: () => import('pages/nginxlog/area/AreaIndex.vue')
-          }]
+          }
+        ]
       }]
   },
   {
