@@ -73,6 +73,25 @@ export function payRecordUtcToBeijing (utcDatetime: string) {
   const DD = (dateTime.getDate() < 10 ? '0' + (dateTime.getDate()) : dateTime.getDate())
   return YY + MM + DD
 }
+export function payRecordUtcToBeijingYMDHM (utcDatetime: string) {
+  // 转为正常的时间格式 年-月-日 时:分:秒
+  const newDateTime = utcDatetime.split('T')[0] + ' ' + utcDatetime.split('T')[1].split('.')[0]
+  // 处理成为时间戳
+  let timeStamp = new Date(newDateTime.replace(/-/g, '/')).getTime()
+  timeStamp = timeStamp / 1000
+  // 增加8个小时，北京时间比utc时间多八个时区
+  timeStamp = timeStamp + 8 * 60 * 60
+  const Timestamp = timeStamp.toString()
+  // 时间戳转为时间
+  const dateTime = new Date(parseInt(Timestamp) * 1000)
+  const YY = dateTime.getFullYear() + '-'
+  const MM = (dateTime.getMonth() + 1 < 10 ? '0' + (dateTime.getMonth() + 1) : dateTime.getMonth() + 1) + '-'
+  const DD = (dateTime.getDate() < 10 ? '0' + (dateTime.getDate()) : dateTime.getDate())
+  const hh = (dateTime.getHours() < 10 ? ' 0' + (dateTime.getHours()) : ' ' + dateTime.getHours())
+  const mm = (dateTime.getMinutes() < 10 ? ':0' + (dateTime.getMinutes()) : ':' + dateTime.getMinutes())
+
+  return YY + MM + DD + hh + mm
+}
 export function payRecordUtcToBeijingDetail (utcDatetime: string) {
   // 转为正常的时间格式 年-月-日 时:分:秒
   const newDateTime = utcDatetime.split('.')[0] + 'Z'
