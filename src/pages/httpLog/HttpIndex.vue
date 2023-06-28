@@ -5,7 +5,7 @@ import { i18n } from 'boot/i18n'
 import { navigateToUrl } from 'single-spa'
 const { tc } = i18n.global
 const store = useStore()
-const activeItem = ref(store.items.currentPath[1])
+const activeItem = ref('storage')
 const changeTab = async (name: string) => {
   activeItem.value = name
   await navigateToUrl(`/my/log/http/${name}`)

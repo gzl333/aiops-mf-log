@@ -11,7 +11,6 @@ const changeTab = async (name: string) => {
   activeItem.value = name
   await router.push({ path: `/my/log/dns/${name}` })
 }
-
 </script>
 
 <template>

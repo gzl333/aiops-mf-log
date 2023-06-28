@@ -1,6 +1,32 @@
 // 更新日志内容，版本降序排列
 export const logs = [
   {
+    version: 'v0.0.8',
+    date: '2023-06-28',
+    time: '17:00:09',
+    release_author: '姜子涵',
+    updates: [
+      {
+        info: '日志总体布局更改，增加子日志应用',
+        commit_author: '姜子涵',
+        feat_author: '姜子涵',
+        design_author: '张海明'
+      },
+      {
+        info: '对象存储科技云日志样式修改',
+        commit_author: '姜子涵',
+        feat_author: '赵万福',
+        design_author: '张海明'
+      },
+      {
+        info: 'Dns日志列表样式修改',
+        commit_author: '姜子涵',
+        feat_author: '王悦',
+        design_author: '张海明'
+      }
+    ]
+  },
+  {
     version: 'v0.0.7',
     date: '2023-06-27',
     time: '17:00:09',
