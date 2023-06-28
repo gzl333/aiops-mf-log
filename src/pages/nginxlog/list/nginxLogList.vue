@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import aiops from '../../../api/aiops'
 import { getNowFormatDate, payRecordUtcToBeijing } from '../../../hooks/processTime'
 // 时间选择器 数据与方法
 // const currentDate = getNowFormatDate(1)
@@ -24,66 +25,74 @@ function formatDateTime (date:Date): string {
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${year}-${month}-${day} ${hours}:${minutes}`
 }
+function formatTimestamp (timestamp: number): string {
+  const date = new Date(timestamp * 1000)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  const formattedDate = `${year}-${month}-${day}`
+  const formattedTime = `${hours}:${minutes}:${seconds}`
+  return `${formattedDate} ${formattedTime}`
+}
+
 const startDate = formatDateTime(date)
 const currentDate = formatDateTime(date2)
 const dateFrom = ref(startDate)
 const dateTo = ref(currentDate)
 // 排序方法与变量
 const sortType = ref('集群分类')
-const info = {
-  sort: 1,
-  remote_ip: '123.23.23.0',
-  local_ip: '235.234.22.0',
-  creation_time: '2023-07-08',
-  request_info: 'GET/example.html HTTP/1.1',
-  upload_stream: '1234',
-  down_stream: '12222',
-  status: '200',
-  bucket_name: 'bucket02'
-}
-const arr1: Array<any> = []
-for (let i = 0; i < 20; i++) {
-  arr1.push(info)
-}
-const nginxLogTableRow = ref(arr1)
-// const nginxLogTableRow = ref([{
-//   sort: 1,
-//   remote_ip: '123.23.23.0',
-//   local_ip: '235.234.22.0',
-//   creation_time: '2023-07-08',
-//   request_info: 'GET/example.html HTTP/1.1',
-//   upload_stream: '1234',
-//   down_stream: '12222',
-//   status: '200',
-//   bucket_name: 'bucket02'
-// }, {
-//   sort: 2,
-//   remote_ip: '125.23.23.0',
-//   local_ip: '215.234.22.0',
-//   creation_time: '2023-07-08',
-//   request_info: 'Post/example.html HTTP/1.1',
-//   upload_stream: '9994',
-//   down_stream: '888882',
-//   status: '500',
-//   bucket_name: 'bucket01'
-// }])
 // 数据表字段设计
 const nginxLogColumns = computed(() => [
-  { name: 'sort', label: '序号', align: 'center' },
-  { name: 'remote_ip', label: '用户IP', align: 'center' },
-  { name: 'local_ip', label: '服务IP', align: 'center' },
   { name: 'creation_time', label: '时间', align: 'center' },
-  { name: 'request_info', label: '请求行', align: 'center' },
+  { name: 'remote_ip', label: '源IP', align: 'center' },
+  { name: 'local_ip', label: '服务IP', align: 'center' },
+  { name: 'bucket_name', label: '桶名称', align: 'center' },
   { name: 'upload_stream', label: '上行流量', align: 'center' },
   { name: 'down_stream', label: '下行流量', align: 'center' },
   { name: 'status', label: '状态', align: 'center' },
-  { name: 'bucket_name', label: '桶名称', align: 'center' }
+  { name: 'request_info', label: '请求行', align: 'center' }
 ])
 // 分页表变量
 const paginationTable = ref({
   page: 2,
   count: 20,
   rowsPerPage: 5
+})
+const result = ref()
+const arrObslog: Array<any> = []
+const getObsloginfo = async () => {
+  await aiops.login.obs.getAskUrl({ query: {} }).then((res) => {
+    result.value = res.data
+  })
+}
+function loadObsInfo (res:any): void {
+  for (let i = 0; i < res.value.length; i++) {
+    const info = {
+      creation_time: formatTimestamp(res.value[i].datetime),
+      remote_ip: res.value[i].user_ip,
+      local_ip: res.value[i].real_ip,
+      request_info: res.value[i].http_referer,
+      upload_stream: res.value[i].req_bytes,
+      down_stream: res.value[i].res_bytes,
+      status: res.value[i].status,
+      bucket_name: res.value[i].bucket
+    }
+    if (i >= 1000) {
+      break
+    }
+    arrObslog.push(info)
+  }
+}
+const nginxLogTableRow = ref()
+onMounted(async () => {
+  setTimeout(async () => {
+    await getObsloginfo()
+    loadObsInfo(result)
+    nginxLogTableRow.value = arrObslog
+  }, 50)
 })
 // 饼状图
 </script>
@@ -166,15 +175,15 @@ const paginationTable = ref({
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <div class="text-grey-6 col-9 q-mt-md q-pl-md">
-                  <span> 声明: 相关接口正在研发中，本页面暂时使用静态数据</span>
-                  </div>
+<!--                  <div class="text-grey-6 col-9 q-mt-md q-pl-md">-->
+<!--                  <span> 声明: 相关接口正在研发中，本页面暂时使用静态数据</span>-->
+<!--                  </div>-->
                 </div>
               </div>
               <div class="row justify-center" >
                 <q-table
                   flat
-                  class="row col-12  justify-start  q-pl-md "
+                  class="row col-20  justify-start  q-pl-md "
                   id="StorageMeteringTable"
                   card-class="no-padding"
                   table-header-class="bg-grey-1 text-grey"
@@ -192,16 +201,16 @@ const paginationTable = ref({
                       <q-td class="no-padding"  key="sort" :props="props">
                         {{ props.row.sort}}
                       </q-td>
-                      <q-td class="no-padding"  key="remote_ip" :props="props">{{ props.row.remote_ip }}</q-td>
-                      <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="local_ip" :props="props">{{ props.row.local_ip}}</q-td>
-                      <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="creation_time" :props="props">{{ props.row.creation_time}}</q-td>
-                      <q-td class="no-padding" key="request_info" :props="props">
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">{{ props.row.creation_time}}</q-td>
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props" style="white-space:normal;">{{ props.row.remote_ip }}</q-td>
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.local_ip}}</q-td>
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row.bucket_name}}</q-td>
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>
+                      <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>
+                      <q-td  :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">
                         {{ props.row.request_info }}
                       </q-td>
-                      <q-td class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>
-                      <q-td class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>
-                      <q-td class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>
-                      <q-td class="no-padding" key="status" :props="props">{{ props.row.bucket_name}}</q-td>
                     </q-tr>
                   </template>
                   <template v-slot:top-right>
