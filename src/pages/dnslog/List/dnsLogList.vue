@@ -3,20 +3,16 @@ import { ref, computed, onMounted } from 'vue'
 import { getNowFormatDate, payRecordUtcToBeijingYMDHM } from '../../../hooks/processTime'
 
 // 时间选择
-const currentDate = getNowFormatDate(1)
-console.log('1', currentDate)
+// const currentDate = getNowFormatDate(1)
+// console.log('1', currentDate)
 const date = new Date()
-date.setHours(date.getHours(), date.getMinutes() - date.getTimezoneOffset())
-date.setMonth(date.getMonth())
-console.log('2', date)
+date.setMinutes(date.getMinutes() - 1)
+const endDate = payRecordUtcToBeijingYMDHM(date.toISOString())
 const date2 = new Date()
 date2.setMinutes(date2.getMinutes() - 2)
 const startDate = payRecordUtcToBeijingYMDHM(date2.toISOString())
-console.log('3', startDate)
 const dateFrom = ref(startDate)
-console.log('3', dateFrom.value
-)
-const dateTo = ref(currentDate)
+const dateTo = ref(endDate)
 // 表格部分
 const dnsLogTableRow = ref([{
   sort: 1,
@@ -88,7 +84,7 @@ onMounted(async () => {
   <div class="Service1Page">
     <div class="row justify-start">
       <!-- 时间选择1 -->
-      <div class="col-3">
+      <div class="col-2">
         <q-input filled dense v-model="dateFrom" mask="datetime" >
           <template v-slot:prepend>
             <q-icon name="event" class="cursor-pointer">
@@ -116,12 +112,12 @@ onMounted(async () => {
       </div>
       <div class="text-center q-mx-md q-pt-md">至</div>
       <!-- 时间选择2 -->
-      <div class="col-3 q-mr-md">
+      <div class="col-2 q-mr-md">
         <q-input filled dense v-model="dateTo" mask="datetime" >
           <template v-slot:prepend>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >
+                <q-date minimal v-model="dateFrom" mask="YYYY-MM-DD HH:mm" format24h >
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
                   </div>
@@ -143,7 +139,7 @@ onMounted(async () => {
         </q-input>
       </div>
       <!-- 选择模块 -->
-      <div class="col-5 row justify-start">
+      <!-- <div class="col-5 row justify-start">
         <q-btn-dropdown :label="selectType" class="q-pl-lg col-3   flat no-shadow" :outline="true">
           <q-list>
             <q-item clickable v-close-popup>
@@ -158,15 +154,15 @@ onMounted(async () => {
             </q-item>
           </q-list>
         </q-btn-dropdown>
+      </div> -->
+      <div>
+        <q-input outlined v-model="textSrcip" label="select by source IP" />
+      </div>
+      <div class="col-4 row justify-start">
+        <q-input outlined v-model="textDomain" label="select by domain" />
       </div>
     </div>
     <!-- 选择模块 -->
-    <div class="col-8 row justify-start">
-      <q-input outlined v-model="textSrcip" label="select by source IP" />
-    </div>
-    <div class="col-8 row justify-start">
-      <q-input outlined v-model="textDomain" label="select by domain" />
-    </div>
     <div class="row justify-center" >
       <q-table
         flat
@@ -196,24 +192,6 @@ onMounted(async () => {
         </template>
         <template v-slot:top-right>
           <div class="col-auto row items-center q-gutter-x-xs">
-            <q-btn
-              class="col-auto"
-              color="primary"
-              flat
-              :label="'导出当页数据'"
-              no-caps
-              dense
-              @click="exportTable()"
-            />
-            <q-btn
-              class="col-auto"
-              color="primary"
-              flat
-              :label="'导出全部数据'"
-              no-caps
-              dense
-              @click="exportAllTable"
-            />
             <span class="text-grey"> (注: 限制导出最大记录数为 1000)</span>
           </div>
         </template>
