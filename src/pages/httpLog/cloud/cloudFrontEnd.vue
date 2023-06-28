@@ -4,7 +4,7 @@ console.log(2)
 
 <template>
   <div class="Service2Page">
-    this is Service2Page
+    this is 一体云前端日志
   </div>
 </template>
 

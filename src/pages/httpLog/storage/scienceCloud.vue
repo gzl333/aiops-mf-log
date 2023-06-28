@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { getNowFormatDate, payRecordUtcToBeijing } from '../../../hooks/processTime'
 // 时间选择器 数据与方法
 // const currentDate = getNowFormatDate(1)
 const date = new Date()
@@ -89,7 +88,7 @@ const paginationTable = ref({
 </script>
 
 <template>
-  <div class="Service1Page">
+  <div class="Service1Page q-ml-md">
               <div class="row justify-start">
                 <div class="col-2">
                   <q-input filled dense v-model="dateFrom" mask="datetime" >
@@ -101,8 +100,6 @@ const paginationTable = ref({
                               <q-date v-model="dateFrom" mask="YYYY-MM-DD HH:mm" @update:model-value="selectDate" />
                               <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm"/>
                             </div>
-          <!--                <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >-->
-          <!--                  <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" color="purple" />-->
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="确定" color="primary" flat/>
                             </div>

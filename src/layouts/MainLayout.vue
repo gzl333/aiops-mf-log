@@ -28,6 +28,17 @@ const appVersion = logs[0].version
             </q-item>
             <q-item
               clickable
+              :active="activeItem === 'http'"
+              @click="navigateToUrl(appPath + '/http')"
+              active-class="active-item"
+            >
+              <q-item-section class="column items-center">
+                <q-icon name="las la-server" size="lg"/>
+                <div class="active-text text-center">{{ tc('HTTP日志') }}</div>
+              </q-item-section>
+            </q-item>
+            <q-item
+              clickable
               :active="activeItem === 'dns'"
               @click="navigateToUrl(appPath + '/dns')"
               active-class="active-item"
@@ -48,17 +59,6 @@ const appVersion = logs[0].version
                 <div class="active-text text-center">{{ tc('nat') }}</div>
               </q-item-section>
             </q-item>
-            <q-item
-              clickable
-              :active="activeItem === 'nginx'"
-              @click="navigateToUrl(appPath + '/nginx')"
-              active-class="active-item"
-            >
-              <q-item-section class="column items-center">
-                <q-icon name="las la-server" size="lg"/>
-                <div class="active-text text-center">{{ tc('nginx') }}</div>
-              </q-item-section>
-            </q-item>
 
           </q-list>
 
@@ -76,7 +76,7 @@ const appVersion = logs[0].version
 
                 <div class="text-grey text-caption text-center">{{ tc('releaseTime') }}</div>
                 <div class="text-grey text-caption text-center">
-                  {{ new Date(releaseTime).toLocaleString(i18n.global.locale as string) }}
+                  {{ new Date(releaseTime).toLocaleString(i18n.global.locale) }}
                 </div>
               </q-tooltip>
             </q-icon>

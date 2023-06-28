@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getNowFormatDate, payRecordUtcToBeijingYMDHM } from '../../../hooks/processTime'
 
 // 时间选择
@@ -13,12 +13,6 @@ const date2 = new Date()
 date2.setMinutes(date2.getMinutes() - 2)
 const startDate = payRecordUtcToBeijingYMDHM(date2.toISOString())
 console.log('3', startDate)
-function setDateFrom (setTime:string) {
-  return setTime.split('T')[0]
-}
-function setDateTO (setTime:string) {
-  return setTime.split('T')[0]
-}
 const dateFrom = ref(startDate)
 console.log('3', dateFrom.value
 )
@@ -62,7 +56,32 @@ const paginationTable = ref({
 const textSrcip = ref('')
 const textDomain = ref('')
 const selectType = ref('选择')
-
+import aiops from '../../../api/aiops'
+// 调数据接口
+interface DnsQueryInterface {
+  page?: number;
+  page_size?: number;
+  timestamp?: string;
+  timestamp_lt?: string;
+  timestamp__gt?: number;
+  timestamp__gte?: number;
+  timestamp__Ite?: number;
+  start?: number;
+  end?: number;
+  ordering?: string;
+}
+const dnsQuery = ref<DnsQueryInterface>({
+})
+const result = ref()
+const getdns = async () => {
+  await aiops.log.dns.getdnsinfo({ query: dnsQuery.value }).then((res) => {
+    result.value = res.data.results
+  })
+  console.log('result', result)
+}
+onMounted(async () => {
+  getdns()
+})
 </script>
 
 <template>

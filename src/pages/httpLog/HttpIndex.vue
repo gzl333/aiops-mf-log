@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'stores/store'
-import { useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+import { navigateToUrl } from 'single-spa'
 const { tc } = i18n.global
 const store = useStore()
 const activeItem = ref(store.items.currentPath[1])
-const router = useRouter()
 const changeTab = async (name: string) => {
   activeItem.value = name
-  await router.push({ path: `/my/log/nginx/${name}` })
+  await navigateToUrl(`/my/log/http/${name}`)
 }
 </script>
 
@@ -20,13 +19,12 @@ const changeTab = async (name: string) => {
 
         <div class="col-auto">
           <div class="row justify-center">
-
             <div class="content-fixed-width">
 
               <div class="row justify-between q-pt-lg q-pb-sm">
 
                 <div class="col-auto row items-end text-h6 q-px-none">
-                  对象存储日志
+                  HTTP日志
                 </div>
 
               </div>
@@ -40,8 +38,14 @@ const changeTab = async (name: string) => {
                     indicator-color="primary"
                     active-color="primary"
                   >
-                    <q-tab no-caps name="list" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('logList')"
-                           icon="lab la-bitbucket" @click="changeTab('list')">
+                    <q-tab no-caps name="storage" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('对象存储')"
+                           icon="lab la-bitbucket" @click="changeTab('storage')">
+                    </q-tab>
+                    <q-tab no-caps name="integrate" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('一体云')"
+                           icon="lab la-bitbucket" @click="changeTab('integrate')">
+                    </q-tab>
+                    <q-tab no-caps name="aiopsbot" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('Aiops站点')"
+                           icon="lab la-bitbucket" @click="changeTab('aiopsbot')">
                     </q-tab>
                   </q-tabs>
                 </div>

@@ -55,15 +55,14 @@ const paginationTable = ref({
   count: 0,
   rowsPerPage: 10
 })
-// 获取所有服务单元信息 并筛选
 // 服务单元筛选框数据类型接口
 interface ServiceInterface {
   label?: string,
   label_en?: string,
   value?: string
 }
-const deviceOptions = ref< ServiceInterface[] >([])
-deviceOptions.value.push({ label: '全部设备', label_en: 'all', value: 'all' }, { label: 'H3C', label_en: 'H3C', value: 'H3C' }, { label: '华为MSR系列路由器', label_en: 'H3C', value: '华为MSR系列路由器' })
+const deviceOptions = ref< ServiceInterface[] >([{ label: '全部设备', label_en: 'all', value: 'all' }, { label: 'H3C', label_en: 'H3C', value: 'H3C' }, { label: '华为MSR系列路由器', label_en: 'H3C', value: '华为MSR系列路由器' }])
+
 const device = ref({
   label: '全部设备',
   labelEn: 'All Device',

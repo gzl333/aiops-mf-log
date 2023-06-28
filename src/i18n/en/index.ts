@@ -7,8 +7,8 @@ export default {
   realtime: 'Realtime Data',
   trajectory: 'User Trajectory',
   area: 'User Area',
-  dns: 'Dns Log',
+  dns: 'DNS Log',
   nginx: 'Nginx Log',
   logList: 'Log List',
-  nat: 'Nat Log'
+  nat: 'NAT Log'
 }

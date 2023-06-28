@@ -1,7 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 
 // @mimas: allocated root path of current app, defined in package.json
-const appPath = process.env.appPath as string
 
 const routes: RouteRecordRaw[] = [
   {
@@ -43,14 +42,53 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/AboutPage.vue')
       },
       {
-        path: 'nginx',
-        component: () => import('pages/nginxlog/nginxLogIndex.vue'),
-        redirect: '/my/log/nginx/list',
-        children: [
-          {
-            path: 'list',
-            component: () => import('pages/nginxlog/list/nginxLogList.vue')
-          }
+        path: 'http',
+        component: () => import('pages/httpLog/HttpIndex.vue'),
+        redirect: '/my/log/http/storage',
+        children: [{
+          path: 'storage',
+          component: () => import('pages/httpLog/storage/storageIndex.vue'),
+          redirect: '/my/log/http/storage/science',
+          children: [
+            {
+              path: 'science',
+              component: () => import('pages/httpLog/storage/scienceCloud.vue')
+            },
+            {
+              path: 'software',
+              component: () => import('pages/httpLog/storage/softWarePark.vue')
+            },
+            {
+              path: 'aiops',
+              component: () => import('pages/httpLog/storage/aiops.vue')
+            }]
+        }, {
+          path: 'integrate',
+          component: () => import('pages/httpLog/cloud/intergrateCloudIndex.vue'),
+          redirect: '/my/log/http/integrate/frontend',
+          children: [
+            {
+              path: 'frontend',
+              component: () => import('pages/httpLog/cloud/cloudFrontEnd.vue')
+            },
+            {
+              path: 'backend',
+              component: () => import('pages/httpLog/cloud/cloudBackEnd.vue')
+            }]
+        }, {
+          path: 'aiopsbot',
+          component: () => import('pages/httpLog/Aiops/aiopsLogIndex.vue'),
+          redirect: '/my/log/http/aiopsbot/frontend',
+          children: [
+            {
+              path: 'frontend',
+              component: () => import('pages/httpLog/Aiops/aiopsFrontEnd.vue')
+            },
+            {
+              path: 'backend',
+              component: () => import('pages/httpLog/Aiops/aiopsBackEnd.vue')
+            }]
+        }
         ]
       }]
   },

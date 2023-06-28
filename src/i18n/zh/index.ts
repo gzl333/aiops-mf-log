@@ -7,8 +7,8 @@ export default {
   realtime: '实时数据',
   trajectory: '用户轨迹',
   area: '用户区域',
-  dns: 'Dns日志',
+  dns: 'DNS日志',
   nginx: '对象存储日志',
   logList: '日志列表',
-  nat: 'Nat日志'
+  nat: 'NAT日志'
 }

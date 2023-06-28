@@ -26,7 +26,7 @@ const changeTab = async (name: string) => {
               <div class="row justify-between q-pt-lg q-pb-sm">
 
                 <div class="col-auto row items-end text-h6 q-px-none">
-                  Nat日志
+                  NAT日志
                 </div>
 
               </div>

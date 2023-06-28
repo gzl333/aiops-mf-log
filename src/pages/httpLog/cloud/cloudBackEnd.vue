@@ -4,7 +4,7 @@ console.log(2)
 
 <template>
   <div class="Service2Page">
-    this is nginx trajectory
+    this is 一体云后端日志
   </div>
 </template>
 
