@@ -58,41 +58,19 @@ onMounted(async () => {
   <div class="PersonalIndex">
     <q-scroll-area style="height: calc(100vh - 60px);">
       <div class="column">
-
         <div class="col-auto">
           <div class="row justify-center">
             <div class="content-fixed-width">
-
               <div class="row justify-between q-pt-lg q-pb-sm">
-
                 <div class="col-auto row items-end text-h6 q-px-none">
                   HTTP日志
                 </div>
-
               </div>
 
-              <div class="row">
-                <div class="col">
-                  <q-tabs
-                    v-model="activeItem"
-                    inline-label
-                    align="left"
-                    indicator-color="primary"
-                    active-color="primary"
-                  >
-                    <q-tab no-caps  v-for="item in  bigTabList" :name="item.desc_name" class="q-px-none q-py-md q-mr-md"
-                           :ripple="false" :label="item.desc_name" :key="item.desc_name"
-                           icon="lab la-bitbucket" @click="changeBigTab (item.id)">
-                    </q-tab>
-                  </q-tabs>
-                </div>
-              </div>
             </div>
           </div>
         </div>
-
         <q-separator/>
-
         <div class="col-auto q-pt-xl">
           <div class="row justify-center">
             <div class="content-fixed-width">
@@ -110,13 +88,11 @@ onMounted(async () => {
                   </q-tab>
                 </q-tabs>
                 <div style="width: 90%">
-
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </q-scroll-area>
   </div>
