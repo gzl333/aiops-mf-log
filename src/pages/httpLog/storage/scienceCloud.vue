@@ -62,15 +62,43 @@ const paginationTable = ref({
   rowsPerPage: 5
 })
 const result = ref()
-const arrObslog: Array<any> = []
-const getObsloginfo = async () => {
-  await aiops.login.obs.getAskUrl({ query: {} }).then((res) => {
+class LogInfoInterface {
+  creation_time: string | undefined
+  remote_ip: string | undefined
+  local_ip: string | undefined
+  request_info: string | undefined
+  upload_stream: number | undefined
+  down_stream: number | undefined
+  status: number | undefined
+  bucket_name: string | undefined
+  constructor (creationTime: string, remoteIp: string, localIp: string, requestInfo: string, uploadStream: number, downStream: number, status: number, bucketName: string) {
+    this.creation_time = creationTime
+    this.remote_ip = remoteIp
+    this.local_ip = localIp
+    this.request_info = requestInfo
+    this.upload_stream = uploadStream
+    this.down_stream = downStream
+    this.status = status
+    this.bucket_name = bucketName
+  }
+}
+const endTime = ref(Date.parse(new Date().toString()) / 1000)
+const startTime = ref(endTime.value - 10 * 60)
+const queryInfo = ref({
+  start: startTime.value.toString(),
+  end: endTime.value.toString(),
+  limit: 1000
+})
+console.log(queryInfo.value)
+const arrObsLog: Array<LogInfoInterface> = []
+const getObsLogInfo = async () => {
+  await aiops.login.obs.getAskUrl({ query: queryInfo.value }).then((res) => {
     result.value = res.data
   })
 }
 function loadObsInfo (res:any): void {
   for (let i = 0; i < res.value.length; i++) {
-    const info = {
+    const info: LogInfoInterface = {
       creation_time: formatTimestamp(res.value[i].datetime),
       remote_ip: res.value[i].user_ip,
       local_ip: res.value[i].real_ip,
@@ -83,17 +111,18 @@ function loadObsInfo (res:any): void {
     if (i >= 1000) {
       break
     }
-    arrObslog.push(info)
+    arrObsLog.push(info)
   }
 }
 const nginxLogTableRow = ref()
 onMounted(async () => {
   setTimeout(async () => {
-    await getObsloginfo()
+    await getObsLogInfo()
     loadObsInfo(result)
-    nginxLogTableRow.value = arrObslog
+    nginxLogTableRow.value = arrObsLog
   }, 50)
 })
+console.log(nginxLogTableRow)
 // 饼状图
 </script>
 

@@ -24,14 +24,15 @@ export default {
     obs: {
       getAskUrl (payload: {
         query: {
-          // clientUrl: string;
-          // type?: string;
+          start?: string;
+          end?: string;
+          limit?: number
         }
       }) {
         const config = {
           params: payload.query
         }
-        return axiosAiops.get('/v1/log/obs/', config)
+        return axiosAiops.get('/v1/log/http-log/1/', config)
       }
     }
   }
