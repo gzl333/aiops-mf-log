@@ -10,12 +10,12 @@ date.setMonth(date.getMonth())
 const date2 = new Date()
 date2.setMonth(date2.getMonth() - 1)
 const startDate = payRecordUtcToBeijing(date2.toISOString())
-function setDateFrom (setTime:string) {
-  return setTime.split('T')[0]
-}
-function setDateTO (setTime:string) {
-  return setTime.split('T')[0]
-}
+// function setDateFrom (setTime:string) {
+//   return setTime.split('T')[0]
+// }
+// function setDateTO (setTime:string) {
+//   return setTime.split('T')[0]
+// }
 const dateFrom = ref(startDate)
 const dateTo = ref(currentDate)
 const nginxLogTableRow = ref([{

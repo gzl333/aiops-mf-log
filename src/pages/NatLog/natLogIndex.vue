@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'stores/store'
 import { useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'

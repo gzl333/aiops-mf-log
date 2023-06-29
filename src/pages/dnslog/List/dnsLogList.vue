@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getNowFormatDate, payRecordUtcToBeijingYMDHM } from '../../../hooks/processTime'
-
+import { payRecordUtcToBeijingYMDHM } from '../../../hooks/processTime'
 // 时间选择
 // const currentDate = getNowFormatDate(1)
 // console.log('1', currentDate)

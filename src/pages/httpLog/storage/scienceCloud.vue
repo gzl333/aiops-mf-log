@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import aiops from '../../../api/aiops'
-import { getNowFormatDate, payRecordUtcToBeijing } from '../../../hooks/processTime'
 // 时间选择器 数据与方法
 // const currentDate = getNowFormatDate(1)
 const date = new Date()
@@ -11,12 +10,12 @@ date.setMinutes(date.getMinutes() - 10)
 const date2 = new Date()
 // date2.setMonth(date2.getMonth() - 1)
 // const startDate = payRecordUtcToBeijing(date2.toISOString())
-function setDateFrom (setTime:string) {
-  return setTime.split('T')[0]
-}
-function setDateTO (setTime:string) {
-  return setTime.split('T')[0]
-}
+// function setDateFrom (setTime:string) {
+//   return setTime.split('T')[0]
+// }
+// function setDateTO (setTime:string) {
+//   return setTime.split('T')[0]
+// }
 function formatDateTime (date:Date): string {
   const year = date.getFullYear().toString().padStart(4, '0')
   const month = (date.getMonth() + 1).toString().padStart(2, '0')

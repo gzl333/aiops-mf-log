@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 import { navigateToUrl } from 'single-spa'
 const { tc } = i18n.global
-const store = useStore()
 const activeItem = ref('storage')
 const changeTab = async (name: string) => {
   activeItem.value = name
