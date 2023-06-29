@@ -88,8 +88,10 @@ const routes: RouteRecordRaw[] = [
               path: 'backend',
               component: () => import('pages/httpLog/Aiops/aiopsBackEnd.vue')
             }]
-        }
-        ]
+        }, {
+          path: 'website',
+          component: () => import('pages/httpLog/website/websiteGroup.vue')
+        }]
       }]
   },
   {

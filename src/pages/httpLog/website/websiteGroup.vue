@@ -3,8 +3,8 @@ console.log(2)
 </script>
 
 <template>
-  <div class="Service2Pag q-ml-md">
-    this is aiops 日志
+  <div class="Service2Page q-ml-md">
+    this is 网站群
   </div>
 </template>
 

@@ -45,6 +45,9 @@ const changeTab = async (name: string) => {
                     <q-tab no-caps name="aiopsbot" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('Aiops站点')"
                            icon="lab la-bitbucket" @click="changeTab('aiopsbot')">
                     </q-tab>
+                    <q-tab no-caps name="website" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="tc('网站群')"
+                           icon="lab la-bitbucket" @click="changeTab('website')">
+                    </q-tab>
                   </q-tabs>
                 </div>
               </div>

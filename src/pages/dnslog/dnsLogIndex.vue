@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useStore } from 'stores/store'
-import { useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+import { navigateToUrl } from 'single-spa'
 const { tc } = i18n.global
 const store = useStore()
 const activeItem = ref(store.items.currentPath[1])
-const router = useRouter()
 const changeTab = async (name: string) => {
   activeItem.value = name
-  await router.push({ path: `/my/log/dns/${name}` })
+  await navigateToUrl(`/my/log/dns/${name}`)
 }
 </script>
 

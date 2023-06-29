@@ -20,13 +20,13 @@ const changeTab = async (name: string) => {
       @update:model-value="changeTab"
     >
       <q-tab no-caps name="science" class="text-weight-bold" :ripple="false">
-         科技云日志
+         科技云
       </q-tab>
       <q-tab no-caps name="software"  class="text-weight-bold" :ripple="false">
-         软件园日志
+         软件园
       </q-tab>
       <q-tab no-caps name="aiops"  class="text-weight-bold" :ripple="false">
-        Aiops日志
+        Aiops
       </q-tab>
     </q-tabs>
     <div style="width: 90%">

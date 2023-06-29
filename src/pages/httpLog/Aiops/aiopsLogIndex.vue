@@ -22,10 +22,10 @@ const changeTab = async (name: string) => {
       @update:model-value="changeTab"
     >
       <q-tab no-caps name="frontend" class="text-weight-bold" :ripple="false">
-         前端日志
+         前端
       </q-tab>
       <q-tab no-caps name="backend"  class="text-weight-bold" :ripple="false">
-         后端日志
+         后端
       </q-tab>
     </q-tabs>
     <div style="width: 90%">

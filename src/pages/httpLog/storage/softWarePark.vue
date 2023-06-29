@@ -3,7 +3,7 @@ console.log(2)
 </script>
 
 <template>
-  <div class="Service2Page">
+  <div class="Service2Page q-ml-md">
     this is 软件园日志
   </div>
 </template>

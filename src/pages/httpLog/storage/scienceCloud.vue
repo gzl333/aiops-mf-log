@@ -97,8 +97,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="Service1Page">
-              <div class="row justify-start">
+  <div class="Service1Page q-ml-md">
+              <div class="row justify-start ">
                 <div class="col-2">
                   <q-input filled dense v-model="dateFrom" mask="datetime" >
                     <template v-slot:append>
@@ -109,13 +109,10 @@ onMounted(async () => {
                               <q-date v-model="dateFrom" mask="YYYY-MM-DD HH:mm" @update:model-value="selectDate" />
                               <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm"/>
                             </div>
-          <!--                <q-date minimal v-model="dateFrom" @update:model-value="selectDate" >-->
-          <!--                  <q-time v-model="dateFrom" mask="YYYY-MM-DD HH:mm" color="purple" />-->
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="确定" color="primary" flat/>
                             </div>
                           </div>
-          <!--                </q-date>-->
                         </q-popup-proxy>
                       </q-icon>
                     </template>
