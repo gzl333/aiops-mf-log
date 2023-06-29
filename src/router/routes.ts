@@ -44,11 +44,11 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'http',
         component: () => import('pages/httpLog/HttpIndex.vue'),
-        redirect: '/my/log/http/storage',
+        redirect: '/my/log/http/',
         children: [{
           path: 'storage',
           component: () => import('pages/httpLog/storage/storageIndex.vue'),
-          redirect: '/my/log/http/storage/science',
+          redirect: '/my/log/http/',
           children: [
             {
               path: 'science',

@@ -57,6 +57,19 @@ export default {
         }
         return axiosAiops.get('v1/dns/nxdomain/', config)
       }
+    },
+    http: {
+      getlogcategory (payload?: {
+        query?: {
+          page?: number;
+          page_size?: number;
+        }
+      }) {
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/log/http-log/category/', config)
+      }
     }
   }
 }
