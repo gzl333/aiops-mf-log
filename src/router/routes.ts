@@ -47,21 +47,21 @@ const routes: RouteRecordRaw[] = [
         redirect: '/my/log/http/storage',
         children: [{
           path: 'storage',
-          component: () => import('pages/httpLog/storage/storageIndex.vue'),
-          redirect: '/my/log/http/storage/science',
-          children: [
-            {
-              path: 'science',
-              component: () => import('pages/httpLog/storage/scienceCloud.vue')
-            },
-            {
-              path: 'software',
-              component: () => import('pages/httpLog/storage/softWarePark.vue')
-            },
-            {
-              path: 'aiops',
-              component: () => import('pages/httpLog/storage/aiops.vue')
-            }]
+          component: () => import('pages/httpLog/storage/storageIndex.vue')
+          // redirect: '/my/log/http/storage/science',
+          // children: [
+          //   {
+          //     path: 'science',
+          //     component: () => import('pages/httpLog/storage/scienceCloud.vue')
+          //   },
+          //   {
+          //     path: 'software',
+          //     component: () => import('pages/httpLog/storage/softWarePark.vue')
+          //   },
+          //   {
+          //     path: 'aiops',
+          //     component: () => import('pages/httpLog/storage/aiops.vue')
+          //   }]
         }, {
           path: 'integrate',
           component: () => import('pages/httpLog/cloud/intergrateCloudIndex.vue'),
@@ -90,7 +90,8 @@ const routes: RouteRecordRaw[] = [
             }]
         }, {
           path: 'website',
-          component: () => import('pages/httpLog/website/websiteGroup.vue')
+          component: () => import('pages/httpLog/website/websiteGroup.vue'),
+          redirect: '/my/log/http/website'
         }]
       }]
   },

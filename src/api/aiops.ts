@@ -69,6 +69,19 @@ export default {
           params: payload?.query
         }
         return axiosAiops.get('v1/log/http-log/category/', config)
+      },
+      getlogapp (payload?: {
+        query?: {
+          page?: number;
+          page_size?: number;
+          status?: string;
+          category?: string;
+        }
+      }) {
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/log/http-log/app/', config)
       }
     }
   }

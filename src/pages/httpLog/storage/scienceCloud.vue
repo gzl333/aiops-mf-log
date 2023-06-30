@@ -171,9 +171,6 @@ onMounted(async () => {
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-<!--                  <div class="text-grey-6 col-9 q-mt-md q-pl-md">-->
-<!--                  <span> 声明: 相关接口正在研发中，本页面暂时使用静态数据</span>-->
-<!--                  </div>-->
                 </div>
               </div>
               <div class="row justify-center" >
@@ -211,25 +208,6 @@ onMounted(async () => {
                   </template>
                   <template v-slot:top-right>
                     <div class="col-auto row items-center q-gutter-x-xs">
-<!--                      <q-btn-->
-<!--                        class="col-auto"-->
-<!--                        color="primary"-->
-<!--                        flat-->
-<!--                        :label="'导出当页数据'"-->
-<!--                        no-caps-->
-<!--                        dense-->
-<!--                        @click="exportTable()"-->
-<!--                      />-->
-<!--                      <q-btn-->
-<!--                        class="col-auto"-->
-<!--                        color="primary"-->
-<!--                        flat-->
-<!--                        :label="'导出全部数据'"-->
-<!--                        no-caps-->
-<!--                        dense-->
-<!--                        @click="exportAllTable"-->
-<!--                      />-->
-<!--                      <span class="text-grey"> (注: 限制导出最大记录数为 1000)</span>-->
                     </div>
                   </template>
                 </q-table>
