@@ -82,6 +82,13 @@ export default {
           params: payload?.query
         }
         return axiosAiops.get('v1/log/http-log/app/', config)
+      },
+      getlogappinfo (payload: {
+        path: {
+          app_id: string;
+        }
+      }) {
+        return axiosAiops.get('v1/log/http-log/' + payload.path.app_id)
       }
     }
   }

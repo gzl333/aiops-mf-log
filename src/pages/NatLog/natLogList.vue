@@ -10,38 +10,48 @@ date.setMonth(date.getMonth())
 const date2 = new Date()
 date2.setMonth(date2.getMonth() - 1)
 const startDate = payRecordUtcToBeijing(date2.toISOString())
-// function setDateFrom (setTime:string) {
-//   return setTime.split('T')[0]
-// }
-// function setDateTO (setTime:string) {
-//   return setTime.split('T')[0]
-// }
 const dateFrom = ref(startDate)
 const dateTo = ref(currentDate)
 const nginxLogTableRow = ref([{
-  creation_time: '2023-07-08',
-  sort: 1,
-  remote_ip: '123.23.23.0',
-  local_ip: '235.234.22.0',
-  request_info: 'GET/example.html HTTP/1.1',
-  upload_stream: '1234',
-  down_stream: '12222',
-  status: '200'
+  creation_time: '2020-03-08 17:15:20 ',
+  mac_address: 'e0d4e811d749',
+  origin_ip: '192.168.1.109',
+  network_protocol: 'TCP（协议）',
+  origin_port: '7122',
+  target_ip: '235.234.22.3',
+  target_port: '443',
+  transform_origin_ip: '123.23.23.1',
+  transform_origin_port: '32666',
+  package_size: '65535'
 }, {
-  creation_time: '2023-07-08',
-  sort: 2,
-  remote_ip: '125.23.23.0',
-  local_ip: '215.234.22.0',
-  request_info: 'Post/example.html HTTP/1.1',
-  upload_stream: '9994',
-  down_stream: '888882',
-  status: '500'
+  creation_time: '2020-07-08 19:18:50 ',
+  mac_address: 'e0c4e911d780',
+  origin_ip: '192.168.3.109',
+  network_protocol: 'UDP（协议）',
+  origin_port: '8120',
+  target_ip: '235.234.23.3',
+  target_port: '873',
+  transform_origin_ip: '123.23.23.4',
+  transform_origin_port: '32888',
+  package_size: '65535'
+}, {
+  creation_time: '2020-09-16 20:08:30 ',
+  mac_address: 'f0d4f911d780',
+  origin_ip: '192.168.3.101',
+  network_protocol: 'UCP（协议）',
+  origin_port: '9070',
+  target_ip: '235.231.23.3',
+  target_port: '863',
+  transform_origin_ip: '123.23.23.8',
+  transform_origin_port: '42500',
+  package_size: '25531'
 }])
 // 数据表字段设计
 const nginxLogColumns = computed(() => [
   { name: 'create_time', label: 'NAT时间', align: 'center' },
   { name: 'mac_address', label: '设备mac地址', align: 'center' },
   { name: 'origin_ip', label: '源IP地址', align: 'center' },
+  { name: 'network_protocol', label: '协议', align: 'center' },
   { name: 'origin_port', label: '源端口', align: 'center' },
   { name: 'target_ip', label: '目的IP地址', align: 'center' },
   { name: 'target_port', label: '目的端口', align: 'center' },
@@ -52,7 +62,7 @@ const nginxLogColumns = computed(() => [
 // 分页表变量
 const paginationTable = ref({
   page: 1,
-  count: 0,
+  count: 3,
   rowsPerPage: 10
 })
 // 服务单元筛选框数据类型接口
@@ -146,21 +156,33 @@ const search = ref<string>('')
         hide-pagination
         :pagination="{ rowsPerPage: 0 }"
       >
+         {
+         creation_time: '2020-09-08 20:18:50 ',
+         mac_address: 'f0d4f911d780',
+         origin_ip: '192.168.3.101',
+         network_protocol: 'UCP（协议）',
+         origin_port: '9070',
+         target_ip: '235.231.23.3',
+         target_port: '863',
+         transform_origin_ip: '123.23.23.8',
+         package_size: '25531'
+         }
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td class="no-padding"  key="create_time" :props="props">
-              {{ props.row.sort}}
+              {{ props.row.creation_time}}
             </q-td>
-            <q-td class="no-padding"  key="mac_address" :props="props">{{ props.row.remote_ip }}</q-td>
-            <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="origin_ip" :props="props">{{ props.row.local_ip}}</q-td>
-            <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="origin_port" :props="props">{{ props.row.creation_time}}</q-td>
+            <q-td class="no-padding"  key="mac_address" :props="props">{{ props.row.mac_address}}</q-td>
+            <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="origin_ip" :props="props">{{ props.row.origin_ip}}</q-td>
+            <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="network_protocol" :props="props">{{ props.row.network_protocol}}</q-td>
+            <q-td class="no-padding" style="white-space:normal;word-break:break-all;word-wrap:break-word;" key="origin_port" :props="props">{{ props.row.origin_port}}</q-td>
             <q-td class="no-padding" key="target_ip" :props="props">
-              {{ props.row.request_info }}
+              {{ props.row.target_ip }}
             </q-td>
-            <q-td class="no-padding" key="target_port" :props="props">{{ props.row.upload_stream}}</q-td>
-            <q-td class="no-padding" key="transform_origin_ip" :props="props">{{ props.row.down_stream}}</q-td>
-            <q-td class="no-padding" key="transform_origin_port" :props="props">{{ props.row.status}}</q-td>
-            <q-td class="no-padding" key="package_size" :props="props">{{ props.row.status}}</q-td>
+            <q-td class="no-padding" key="target_port" :props="props">{{ props.row.target_port}}</q-td>
+            <q-td class="no-padding" key="transform_origin_ip" :props="props">{{ props.row.transform_origin_ip}}</q-td>
+            <q-td class="no-padding" key="transform_origin_port" :props="props">{{ props.row.transform_origin_port}}</q-td>
+            <q-td class="no-padding" key="package_size" :props="props">{{ props.row.package_size}}</q-td>
           </q-tr>
         </template>
         <template v-slot:top-right>

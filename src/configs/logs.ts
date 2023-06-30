@@ -1,6 +1,26 @@
 // 更新日志内容，版本降序排列
 export const logs = [
   {
+    version: 'v0.0.9',
+    date: '2023-06-30',
+    time: '17:00:09',
+    release_author: '姜子涵',
+    updates: [
+      {
+        info: 'Http日志动态目录增加',
+        commit_author: '姜子涵',
+        feat_author: '姜子涵',
+        design_author: '张海明'
+      },
+      {
+        info: 'Http日志筛选功能的增加,nat日志静态数据修改',
+        commit_author: '姜子涵',
+        feat_author: '姜子涵',
+        design_author: '张海明'
+      }
+    ]
+  },
+  {
     version: 'v0.0.8',
     date: '2023-06-28',
     time: '17:00:09',

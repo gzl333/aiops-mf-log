@@ -50,7 +50,6 @@ const paginationTable = ref({
 // 选择部分
 const textSrcip = ref('')
 const textDomain = ref('')
-const selectType = ref('选择')
 import aiops from '../../../api/aiops'
 // 调数据接口
 interface DnsQueryInterface {
@@ -137,23 +136,6 @@ onMounted(async () => {
           </template>
         </q-input>
       </div>
-      <!-- 选择模块 -->
-      <!-- <div class="col-5 row justify-start">
-        <q-btn-dropdown :label="selectType" class="q-pl-lg col-3   flat no-shadow" :outline="true">
-          <q-list>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-input outlined v-model="textSrcip" label="select by source IP" />
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section>
-                <q-input outlined v-model="textDomain" label="select by domain" />
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </div> -->
       <div>
         <q-input outlined v-model="textSrcip" label="select by source IP" />
       </div>
