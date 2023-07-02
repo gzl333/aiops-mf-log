@@ -38,6 +38,20 @@ export default {
   log: {
     // 科技云通行证登录接口
     dns: {
+      getDnsLog (payload?: {
+        query?: {
+          direction?: string;
+          host_id?: number;
+          limit?: number;
+          start?: number;
+          end?: number;
+        }
+      }) {
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/dns/host/log', config)
+      },
       getdnsinfo (payload?: {
         query?: {
           page?: number;
@@ -83,12 +97,19 @@ export default {
         }
         return axiosAiops.get('v1/log/http-log/app/', config)
       },
-      getlogappinfo (payload: {
-        path: {
-          app_id: string;
+      getlogappinfo (payload?: {
+        query?: {
+          start?: number;
+          end?: number;
+          direction?: string;
+          limit?: string;
+          app_id?: string;
         }
       }) {
-        return axiosAiops.get('v1/log/http-log/' + payload.path.app_id)
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/log/http-log/log', config)
       }
     }
   }
