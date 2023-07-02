@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import LineChart from 'components/chart/LineChart.vue'
 const activeItem = ref()
 const activeItem2 = ref<string|undefined>('')
-import * as echarts from 'echarts'
+import { date } from 'quasar'
 import aiops from '../../api/aiops'
 // 调数据接口
 interface HttpCategroyQueryInterface {
@@ -24,14 +25,15 @@ const getHttpCategroyList = async () => {
   await aiops.log.http.getlogcategory({ query: dnsQuery.value }).then((res) => {
     bigTabList.value = res.data.results
     test1.value = bigTabList.value[0].desc_name
+    test2.value = res.data.results[0]
     activeItem.value = bigTabList?.value[0]?.desc_name
     activeItem2.value = bigTabList?.value[0]?.website[0].desc_name
   })
 }
 // 时间处理
-const date = new Date()
-date.setMonth(date.getMonth())
-date.setMinutes(date.getMinutes() - 10)
+const date1 = new Date()
+date1.setMonth(date1.getMonth())
+date1.setMinutes(date1.getMinutes() - 10)
 const date2 = new Date()
 function formatDateTime (date:Date): string {
   const year = date?.getFullYear().toString().padStart(4, '0')
@@ -46,8 +48,8 @@ function formatMinuteTime (date:Date): string {
   const millisecond = date.getMilliseconds().toString().padStart(3, '0')
   return `${hours}:${minutes}:${second}:${millisecond}`
 }
-const startDate = formatDateTime(date)
-const startTime = formatMinuteTime(date)
+const startDate = formatDateTime(date1)
+const startTime = formatMinuteTime(date1)
 const currentDate = formatDateTime(date2)
 const dateFrom = ref(startDate)
 const timeFrom = ref(startTime)
@@ -152,13 +154,6 @@ const changeSort = async () => {
   arrObsLog.value = []
   await getObsloginfo()
 }
-const changeSmallTab = async (name: string, id: string) => {
-  console.log('changeSmallTabid', id)
-  activeItem2.value = name
-  getLogInfoQuery.value.app_id = id
-  arrObsLog.value = []
-  await getObsloginfo()
-}
 const search = async () => {
   const startString = ref<number>(0)
   const endString = ref(new Date(dateFrom.value + ' ' + timeFrom.value))
@@ -171,7 +166,7 @@ const search = async () => {
   } else if (modelTimeUnit.value.value === 'hour') {
     startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 60 * 1000
   }
-  console.log('startString', startString)
+  console.log('startString', startString.value)
   getLogInfoQuery.value.start = startString.value * 1000000
   getLogInfoQuery.value.end = Math.floor(endString.value.getTime() * 1000000)
   arrObsLog.value = []
@@ -180,6 +175,12 @@ const search = async () => {
     loadObsInfo(result)
   })
   console.log('Echarts', nginxLogTableRow.value)
+}
+const search1 = () => {
+  chartData.value = []
+  const formattedString = date.formatDate(dateFrom.value, 'X')
+  const startTimeFormatter = Number(formattedString) - 28800
+  getTrendChartData(startTimeFormatter, test2.value.website[0].id)
 }
 
 const timeOption = [
@@ -252,7 +253,8 @@ const getDayAll = async (starDay: string, endDay: string) => {
   console.log('datesArray', dates)
   return dates
 }
-const option = {
+const chartData = ref([])
+const option = computed(() => ({
   title: {
     text: '趋势'
   },
@@ -286,31 +288,54 @@ const option = {
       name: '记录数',
       type: 'line',
       stack: 'Total',
-      data: [220, 230, 222, 234, 233, 250, 290, 220, 230, 222, 234, 233, 250, 290, 220, 230, 222, 234, 233, 250, 290]
+      data: chartData.value
     }
   ]
-}
+}))
 // 动态目录
 const test2 = ref<any[]>([])
+const dateStampStr = new Date(new Date().toLocaleDateString()).getTime()
+const getTrendChartData = async (start: number, hostId: string) => {
+  const trendRes = await aiops.log.http.getLogStatistics({ query: { start, host: hostId } })
+  trendRes.data.results.forEach((item) => {
+    chartData.value.push(item.count)
+  })
+}
 const changeBigTabIndex = (index: number, descname: string) => {
+  chartData.value = []
   // index1.value = index
-  activeItem.value = descname
+  // activeItem.value = descname
   test1.value = descname
-  Object.assign(test2.value, bigTabList?.value[index])
+  // Object.assign(test2.value, bigTabList?.value[index])
+  test2.value = bigTabList?.value[index]
+  activeItem2.value = test2.value.website[0].desc_name
+  getTrendChartData(Number(dateStampStr) / 1000, test2.value.website[0].id)
+}
+const changeSmallTab = async (name: string, id: string) => {
+  chartData.value = []
+  console.log('changeSmallTabid', id)
+  activeItem2.value = name
+  getLogInfoQuery.value.app_id = id
+  arrObsLog.value = []
+  await getObsloginfo()
+  await getTrendChartData(Number(dateStampStr) / 1000, id)
 }
 onMounted(async () => {
+  chartData.value = []
   await getHttpCategroyList()
   await getObsloginfo()
   // loadObsInfo(result)
   await getDayAll(dateFrom.value.toString() + ' ' + '00:00:00', dateFrom.value.toString() + ' ' + '23:59:59')
-  const chartDom = document.getElementById('main')!
-  const myChart = echarts.init(chartDom)
-  await myChart.setOption(option)
-  option && myChart.setOption(option)
-  myChart.resize({
-    width: 1230,
-    height: 400
-  })
+  await getTrendChartData(Number(dateStampStr) / 1000, test2.value.website[0].id)
+  // await getTrendChartData()
+  // const chartDom = document.getElementById('main')!
+  // const myChart = echarts.init(chartDom)
+  // await myChart.setOption(option)
+  // option && myChart.setOption(option)
+  // myChart.resize({
+  //   width: 1230,
+  //   height: 400
+  // })
 })
 
 const changePageSize = () => {
@@ -340,15 +365,16 @@ const changePageSize = () => {
                     indicator-color="primary"
                     active-color="primary"
                   >
-                    <q-tab no-caps :name="item?.desc_name" v-model="test1" v-for=" (item, index) in bigTabList" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item?.desc_name"
-                          :key="index"   style="width: 13%" @click="changeBigTabIndex(index,item.desc_name)">
+                    <q-tab no-caps v-for=" (item, index) in bigTabList" :key="index" :label="item?.desc_name" :name="item.desc_name" class="q-px-none q-py-md q-mr-md" :ripple="false"
+                              @click="changeBigTabIndex(index,item.desc_name)" style="width: 13%">
                     </q-tab>
                   </q-tabs>
                 </div>
               </div>
         <q-separator/>
-              <div class="row justify-start q-mt-lg ">
-                <div id="main" class="col-12">
+              <div class="row q-mt-lg ">
+                <div class="col">
+                  <line-chart :option="option"/>
                 </div>
               </div>
               <div class="row justify-start q-mt-lg ">
@@ -368,7 +394,7 @@ const changePageSize = () => {
                     </template>
                   </q-input>
                   </div>
-                  <q-btn class="col-2 q-ml-md"  outline label="看趋势" @click="search(dateFrom)" dense/>
+                  <q-btn class="col-2 q-ml-md"  outline label="看趋势" @click="search1(dateFrom)" dense/>
                   <div class="col-4 q-ml-lg">
                     <q-input filled dense v-model="timeFrom" >
                     <template v-slot:append>
@@ -411,7 +437,7 @@ const changePageSize = () => {
                   active-bg-color="grey-3"
                   style="width: 16%"
                 >
-                  <q-tab :activeItem2 ="item1?.desc_name"  :name="item1?.desc_name" v-for=" (item1, index2) in  test2.website" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1?.desc_name" @click="changeSmallTab(item1?.desc_name, item1.id)"
+                  <q-tab :activeItem2 ="item1?.desc_name"  :name="item1?.desc_name" v-for=" (item1, index2) in  test2.website" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1?.desc_name" @click="changeSmallTab(item1?.desc_name, item1.id )"
                          :key="index2" no-caps>
                   </q-tab>
                 </q-tabs>

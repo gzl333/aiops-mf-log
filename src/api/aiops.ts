@@ -61,7 +61,7 @@ export default {
         const config = {
           params: payload?.query
         }
-        return axiosAiops.get('v1/dns/host/log', config)
+        return axiosAiops.get('v1/dns/host/log/', config)
       },
       getlogdnsinfo (payload?: {
         query?: {
@@ -115,7 +115,21 @@ export default {
         const config = {
           params: payload?.query
         }
-        return axiosAiops.get('v1/log/http-log/log', config)
+        return axiosAiops.get('v1/log/http-log/log/', config)
+      },
+      getLogStatistics (payload: {
+        query: {
+          start?: number;
+          end?: number;
+          host?: string;
+          limit?: number;
+          offset?: number;
+        }
+      }) {
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/log/http-log/statistics/', config)
       }
     }
   }
