@@ -10,21 +10,21 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'dns',
-        component: () => import('pages/dnslog/dnsLogIndex.vue'),
-        redirect: '/my/log/dns/list',
-        children: [
-          {
-            path: 'list',
-            component: () => import('pages/dnslog/List/dnsLogList.vue')
-          },
-          {
-            path: 'trajectory',
-            component: () => import('pages/dnslog/trajectory/TrajectoryIndex.vue')
-          },
-          {
-            path: 'area',
-            component: () => import('pages/dnslog/area/AreaIndex.vue')
-          }]
+        component: () => import('pages/dnslog/List/dnsLogList.vue')
+        // redirect: '/my/log/dns/list',
+        // children: [
+        //   {
+        //     path: 'list',
+        //     component: () => import('pages/dnslog/List/dnsLogList.vue')
+        //   },
+        //   {
+        //     path: 'trajectory',
+        //     component: () => import('pages/dnslog/trajectory/TrajectoryIndex.vue')
+        //   },
+        //   {
+        //     path: 'area',
+        //     component: () => import('pages/dnslog/area/AreaIndex.vue')
+        //   }]
       },
       {
         path: 'nat',

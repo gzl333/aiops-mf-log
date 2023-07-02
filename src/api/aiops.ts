@@ -38,6 +38,17 @@ export default {
   log: {
     // 科技云通行证登录接口
     dns: {
+      getdnslogtype (payload?: {
+        query?: {
+          limit?: number;
+          offset?: number;
+        }
+      }) {
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/dns/host/type', config)
+      },
       getDnsLog (payload?: {
         query?: {
           direction?: string;
@@ -52,24 +63,19 @@ export default {
         }
         return axiosAiops.get('v1/dns/host/log', config)
       },
-      getdnsinfo (payload?: {
+      getlogdnsinfo (payload?: {
         query?: {
-          page?: number;
-          page_size?: number;
-          timestamp?: string;
-          timestamp_lt?: string;
-          timestamp__gt?: number;
-          timestamp__gte?: number;
-          timestamp__Ite?: number;
           start?: number;
           end?: number;
-          ordering?: string;
+          direction?: string;
+          limit?: string;
+          host_id?: number;
         }
       }) {
         const config = {
           params: payload?.query
         }
-        return axiosAiops.get('v1/dns/nxdomain/', config)
+        return axiosAiops.get('v1/dns/host/log/', config)
       }
     },
     http: {
