@@ -130,6 +130,20 @@ export default {
           params: payload?.query
         }
         return axiosAiops.get('v1/log/http-log/statistics/', config)
+      },
+      getDnsStatistics (payload: {
+        query: {
+          start?: number;
+          end?: number;
+          host?: string | number;
+          limit?: number;
+          offset?: number;
+        }
+      }) {
+        const config = {
+          params: payload?.query
+        }
+        return axiosAiops.get('v1/dns/host/statistics/', config)
       }
     }
   }

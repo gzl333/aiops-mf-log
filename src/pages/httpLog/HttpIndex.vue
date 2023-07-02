@@ -56,11 +56,13 @@ const dateFrom = ref(startDate)
 const timeFrom = ref(startTime)
 const toggleSort = ref('forward')
 const getLogInfoQuery = ref<getLogInfoTabListInterface>({
-  direction: toggleSort.value,
+  direction: 'forward',
   start: Math.floor(new Date(dateFrom.value + ' ' + timeFrom.value).getTime() * 1000000 - 1000000000),
   end: Math.floor(new Date(dateFrom.value + ' ' + timeFrom.value).getTime() * 1000000),
   app_id: '825fbe0a-e2b9-4f38-82ae-632b222da560'
 })
+console.log(getLogInfoQuery.value)
+
 // nginx 解析
 class LogInfoInterface {
   creation_time: string | undefined
@@ -95,6 +97,7 @@ function loadEachInfo (logInfo: string) {
     status: Number(infoArray[4])
   }
   arrObsLog.value.push(info)
+  console.log(arrObsLog.value)
 }
 function loadObsInfo (res:any): void {
   for (let i = 0; i < res.value.results.length; i++) {
@@ -131,13 +134,10 @@ interface resultInterface {
   http_referer: string
 }
 const nginxLogTableRow = ref<resultInterface[]>()
-const getObsloginfo = async () => {
-  await aiops.log.http.getlogappinfo({ query: getLogInfoQuery.value }).then((res) => {
-    result.value = res.data
-    paginationTable.value.count = res.data.count
-    loadObsInfo(result)
-  })
-}
+const chartData = ref([])
+const dateStampStr = Number(new Date(new Date().toLocaleDateString()).getTime()) / 1000
+let smallIndex = 0
+let startTimeFormatter = dateStampStr
 // 表单筛选
 const timeNumber = ref(10)
 const modelTimeUnit = ref({
@@ -150,40 +150,22 @@ const checkdate = async (date: string) => {
   }
   console.log('dateFromchange', date)
 }
-const changeSort = async () => {
+const changeSort = async (type: string) => {
+  console.log(type)
+  console.log(toggleSort.value)
   getLogInfoQuery.value.direction = toggleSort.value
+  getLogInfoQuery.value.app_id = test2.value.website[smallIndex].idx
+  console.log(getLogInfoQuery.value)
   arrObsLog.value = []
   await getObsloginfo()
 }
-const search = async () => {
-  const startString = ref<number>(0)
-  const endString = ref(new Date(dateFrom.value + ' ' + timeFrom.value))
-  if (modelTimeUnit.value.value === 'millisecond') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value
-  } else if (modelTimeUnit.value.value === 'second') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 1000
-  } else if (modelTimeUnit.value.value === 'minute') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 1000
-  } else if (modelTimeUnit.value.value === 'hour') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 60 * 1000
-  }
-  console.log('startString', startString.value)
-  getLogInfoQuery.value.start = startString.value * 1000000
-  getLogInfoQuery.value.end = Math.floor(endString.value.getTime() * 1000000)
-  arrObsLog.value = []
+const getObsloginfo = async () => {
   await aiops.log.http.getlogappinfo({ query: getLogInfoQuery.value }).then((res) => {
     result.value = res.data
+    paginationTable.value.count = res.data.count
     loadObsInfo(result)
   })
-  console.log('Echarts', nginxLogTableRow.value)
 }
-const search1 = () => {
-  chartData.value = []
-  const formattedString = date.formatDate(dateFrom.value, 'X')
-  const startTimeFormatter = Number(formattedString) - 28800
-  getTrendChartData(startTimeFormatter, test2.value.website[0].id)
-}
-
 const timeOption = [
   {
     label: 'ms',
@@ -201,6 +183,42 @@ const timeOption = [
     value: 'hour'
   }
 ]
+const search = async () => {
+  const startString = ref<number>(0)
+  const endString = ref(new Date(dateFrom.value + ' ' + timeFrom.value))
+  if (modelTimeUnit.value.value === 'millisecond') {
+    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value
+  } else if (modelTimeUnit.value.value === 'second') {
+    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 1000
+  } else if (modelTimeUnit.value.value === 'minute') {
+    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 1000
+  } else if (modelTimeUnit.value.value === 'hour') {
+    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 60 * 1000
+  }
+  getLogInfoQuery.value.start = startString.value * 1000000
+  getLogInfoQuery.value.end = Math.floor(endString.value.getTime() * 1000000)
+  arrObsLog.value = []
+  await aiops.log.http.getlogappinfo({ query: getLogInfoQuery.value }).then((res) => {
+    result.value = res.data
+    loadObsInfo(result)
+  })
+}
+const changeData = () => {
+  const formattedString = date.formatDate(dateFrom.value, 'X')
+  startTimeFormatter = Number(formattedString) - 28800
+}
+const getTrendChartData = async (start: number, hostId: string) => {
+  mapRef.value.chartStartLoading()
+  const trendRes = await aiops.log.http.getLogStatistics({ query: { start, host: hostId } })
+  trendRes.data.results.forEach((item) => {
+    chartData.value.unshift(item.count)
+  })
+  mapRef.value.chartStopLoading()
+}
+const search1 = () => {
+  chartData.value = []
+  getTrendChartData(startTimeFormatter, test2.value.website[smallIndex].id)
+}
 
 function fromatTime (timestamp:string) {
   const day = timestamp.substring(0, 2)
@@ -254,7 +272,6 @@ const getDayAll = async (starDay: string, endDay: string) => {
   }
   return dates
 }
-const chartData = ref([])
 const option = computed(() => ({
   title: {
     text: '趋势'
@@ -289,21 +306,13 @@ const option = computed(() => ({
       name: '记录数',
       type: 'line',
       stack: 'Total',
+      symbol: 'none',
       data: chartData.value
     }
   ]
 }))
 // 动态目录
-const test2: any = ref<>([])
-const dateStampStr = new Date(new Date().toLocaleDateString()).getTime()
-const getTrendChartData = async (start: number, hostId: string) => {
-  mapRef.value.chartStartLoading()
-  const trendRes = await aiops.log.http.getLogStatistics({ query: { start, host: hostId } })
-  trendRes.data.results.forEach((item) => {
-    chartData.value.unshift(item.count)
-  })
-  mapRef.value.chartStopLoading()
-}
+const test2: any = ref([])
 const changeBigTabIndex = (index: number, descname: string) => {
   chartData.value = []
   // index1.value = index
@@ -312,16 +321,16 @@ const changeBigTabIndex = (index: number, descname: string) => {
   // Object.assign(test2.value, bigTabList?.value[index])
   test2.value = bigTabList?.value[index]
   activeItem2.value = test2.value.website[0].desc_name
-  getTrendChartData(Number(dateStampStr) / 1000, test2.value.website[0].id)
+  getTrendChartData(dateStampStr, test2.value.website[smallIndex].id)
 }
-const changeSmallTab = async (name: string, id: string) => {
+const changeSmallTab = async (name: string, id: string, index: number) => {
   chartData.value = []
-  console.log('changeSmallTabid', id)
+  smallIndex = index
   activeItem2.value = name
   getLogInfoQuery.value.app_id = id
   arrObsLog.value = []
   await getObsloginfo()
-  await getTrendChartData(Number(dateStampStr) / 1000, id)
+  await getTrendChartData(startTimeFormatter, id)
 }
 onMounted(async () => {
   chartData.value = []
@@ -329,7 +338,7 @@ onMounted(async () => {
   await getObsloginfo()
   // loadObsInfo(result)
   await getDayAll(dateFrom.value.toString() + ' ' + '00:00:00', dateFrom.value.toString() + ' ' + '23:59:59')
-  await getTrendChartData(Number(dateStampStr) / 1000, test2.value.website[0].id)
+  await getTrendChartData(dateStampStr, test2.value.website[smallIndex].id)
   // await getTrendChartData()
   // const chartDom = document.getElementById('main')!
   // const myChart = echarts.init(chartDom)
@@ -383,11 +392,11 @@ const changePageSize = () => {
               <div class="row justify-start q-mt-lg ">
                 <div class="col-5 row justify-start">
                   <div class="col-4 q-ml-lg">
-                  <q-input filled dense v-model="dateFrom" >
+                  <q-input filled dense v-model="dateFrom">
                     <template v-slot:prepend>
                       <q-icon name="event" class="cursor-pointer">
                         <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                          <q-date minimal v-model="dateFrom" mask="YYYY-MM-DD">
+                          <q-date minimal v-model="dateFrom" mask="YYYY-MM-DD" @update:model-value="changeData">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="确定" color="primary" flat/>
                             </div>
@@ -397,7 +406,7 @@ const changePageSize = () => {
                     </template>
                   </q-input>
                   </div>
-                  <q-btn class="col-2 q-ml-md"  outline label="看趋势" @click="search1(dateFrom)" dense/>
+                  <q-btn class="col-2 q-ml-md"  outline label="看趋势" @click="search1" dense/>
                   <div class="col-4 q-ml-lg">
                     <q-input filled dense v-model="timeFrom" >
                     <template v-slot:append>
@@ -440,7 +449,7 @@ const changePageSize = () => {
                   active-bg-color="grey-3"
                   style="width: 16%"
                 >
-                  <q-tab :activeItem2 ="item1?.desc_name"  :name="item1?.desc_name" v-for=" (item1, index2) in  test2.website" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1?.desc_name" @click="changeSmallTab(item1?.desc_name, item1.id )"
+                  <q-tab :activeItem2 ="item1?.desc_name"  :name="item1?.desc_name" v-for=" (item1, index2) in  test2.website" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1?.desc_name" @click="changeSmallTab(item1?.desc_name, item1.id, index2)"
                          :key="index2" no-caps>
                   </q-tab>
                 </q-tabs>
@@ -489,12 +498,19 @@ const changePageSize = () => {
                     </div>
                     <div class="text-grey q-mt-lg row justify-start q-mb-lg">
                       <div class="row col-12  justify-start ">
-                        <div class="col-4 justify-start row ">
-                          <span class="q-ml-xl q-pt-sm q-pr-md " >共{{ paginationTable.count }}条数据</span>
-                          <q-select class="q-pt-none" color="grey" v-model="paginationTable.rowsPerPage" :options="[100,200,300]" dense options-dense
-                                    borderless @update:model-value="changePageSize">
-                          </q-select>
-                          <span class="q-pt-sm ">页</span>
+                        <div class="col-4 row items-center">
+                          <div>
+                            <span>共</span>
+                            <span class="text-subtitle1 q-px-xs text-weight-bold">{{ paginationTable.count }}</span>
+                            <span>条数据</span>
+                          </div>
+                          <div class="row q-ml-md items-center">
+                            <span>每页</span>
+                            <q-select color="grey" v-model="paginationTable.rowsPerPage" :options="[100,200,300]" dense options-dense
+                                      borderless @update:model-value="changePageSize">
+                            </q-select>
+                            <span>条</span>
+                          </div>
                         </div>
                         <q-pagination
                           v-model="paginationTable.page"
@@ -503,7 +519,6 @@ const changePageSize = () => {
                           direction-links
                           outline
                           :ripple="false"
-                          @click="changePagination"
                           class="col-8 justify-end q-pr-lg"
                         />
                       </div>

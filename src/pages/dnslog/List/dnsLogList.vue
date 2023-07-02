@@ -1,9 +1,10 @@
-
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 const activeItem2 = ref<string|undefined>('')
-import * as echarts from 'echarts'
 import aiops from '../../../api/aiops'
+import LineChart from 'components/chart/LineChart.vue'
+import { date } from 'quasar'
+
 // 调数据接口
 interface HttpCategroyQueryInterface {
   limit?: number;
@@ -26,9 +27,9 @@ const getHttpCategroyList = async () => {
   })
 }
 // 时间处理
-const date = new Date()
-date.setMonth(date.getMonth())
-date.setMinutes(date.getMinutes() - 10)
+const date1 = new Date()
+date1.setMonth(date1.getMonth())
+date1.setMinutes(date1.getMinutes() - 10)
 const date2 = new Date()
 function formatDateTime (date:Date): string {
   const year = date?.getFullYear().toString().padStart(4, '0')
@@ -43,8 +44,8 @@ function formatMinuteTime (date:Date): string {
   const millisecond = date.getMilliseconds().toString().padStart(3, '0')
   return `${hours}:${minutes}:${second}:${millisecond}`
 }
-const startDate = formatDateTime(date)
-const startTime = formatMinuteTime(date)
+const startDate = formatDateTime(date1)
+const startTime = formatMinuteTime(date1)
 const currentDate = formatDateTime(date2)
 const dateFrom = ref(startDate)
 const timeFrom = ref(startTime)
@@ -74,15 +75,71 @@ interface logInfoInterface {
   response_result?: string | undefined
   response_result_list?: string[] | undefined
 }
+interface logQueryInterface {
+  direction?: string;
+  host_id?: number;
+  limit?: number;
+  start?: number;
+  end?: number;
+}
 const allResult = ref()
 const logList = ref<logInfoInterface[]>([])
-function parseAllResult (res:any) {
+const direction = ref<string>('forward')
+// eslint-disable-next-line camelcase
+const host_id = ref<number>(30001)
+const limit = ref<number>(2)
+const start = ref<number>(1688201100)
+const end = ref<number>(1688201197)
+const dnsLogQuery = ref<logQueryInterface>({
+  direction: direction.value,
+  // eslint-disable-next-line camelcase
+  host_id: host_id.value,
+  limit: limit.value,
+  start: start.value,
+  end: end.value
+})
+// function parseAllResult (res:any) {
+//   for (let i = 0; i < res.length; i++) {
+//     const logInfo = res[i][1]
+//     logList?.value?.push(parseSingleLog(logInfo))
+//   }
+// }
+// function parseSingleLog (value:string) {
+//   const logData = ref<logInfoInterface>({})
+//   const valueList = value.split(' ')
+//   logData.value.time = logTime2Datetime(valueList[2], valueList[3])
+//   logData.value.client_ip = valueList[5]
+//   logData.value.query_domain = valueList[9]
+//   logData.value.query_type = valueList[11]
+//   logData.value.response_type = valueList[12]
+//   logData.value.response_result_list = []
+//   if (logData.value.response_type === "NXDOMAIN") {
+//     logData.value.response_result_list.push("-")
+//   } else if (logData.value.response_type === "NOERROR") {
+//     if (valueList.length >= 30) {
+//       for (let i = 30; i < valueList.length; i++) {
+//         if (valueList[i] === "A" || valueList[i] === "CNAME") {
+//           logData.value.response_result_list.push(valueList[i + 1].split(";")[0])
+//         }
+//       }
+//     } else {
+//       logData.value.response_result_list.push("null")
+//     }
+//   }
+//   return logData.value
+// }
+function parseAllResult (res:any): void {
   for (let i = 0; i < res.length; i++) {
-    const logInfo = res[i][1]
-    logList?.value?.push(parseSingleLog(logInfo))
+    if (dnsLogQuery.value.host_id === 30001) {
+      const logInfoRJY = res[i][1]
+      logList?.value?.push(parseSingleLogRJY(logInfoRJY))
+    } else if (dnsLogQuery.value.host_id === 1) {
+      const logInfoXXH = res[i][1]
+      logList?.value?.push(parseSingleLogXXH(logInfoXXH))
+    }
   }
 }
-function parseSingleLog (value:string) {
+function parseSingleLogRJY (value:string) {
   const logData = ref<logInfoInterface>({})
   const valueList = value.split(' ')
   logData.value.time = logTime2Datetime(valueList[2], valueList[3])
@@ -91,18 +148,38 @@ function parseSingleLog (value:string) {
   logData.value.query_type = valueList[11]
   logData.value.response_type = valueList[12]
   logData.value.response_result_list = []
-  if (logData.value.response_type === "NXDOMAIN") {
-    logData.value.response_result_list.push("-")
-  } else if (logData.value.response_type === "NOERROR") {
+  if (logData.value.response_type === 'NXDOMAIN') {
+    logData.value.response_result_list.push('-')
+  } else if (logData.value.response_type === 'NOERROR') {
     if (valueList.length >= 30) {
       for (let i = 30; i < valueList.length; i++) {
-        if (valueList[i] === "A" || valueList[i] === "CNAME") {
-          logData.value.response_result_list.push(valueList[i + 1].split(";")[0])
+        if (valueList[i] === 'A' || valueList[i] === 'CNAME') {
+          logData.value.response_result_list.push(valueList[i + 1].split(';')[0])
         }
       }
     } else {
-      logData.value.response_result_list.push("null")
+      logData.value.response_result_list.push('null')
     }
+  }
+  return logData.value
+}
+
+function parseSingleLogXXH (value:string) {
+  const logData = ref<logInfoInterface>({})
+  const valueList = value.split('} {')
+  const valueJson = JSON.parse('{' + valueList[1])
+  logData.value.time = valueJson.timestamp.replace('T', ' ').split('.')[0]
+  logData.value.client_ip = valueJson.client_ip
+  logData.value.query_domain = valueJson.view
+  logData.value.query_type = valueJson.type
+  logData.value.response_type = valueJson.status
+  logData.value.response_result_list = []
+  if (logData.value.response_type === 'NXDOMAIN') {
+    logData.value.response_result_list.push('-')
+  } else if (logData.value.response_type === 'NOERROR') {
+    logData.value.response_result_list = valueJson.Response
+  } else {
+    logData.value.response_result_list.push('null')
   }
   return logData.value
 }
@@ -115,60 +192,58 @@ function logTime2Datetime (logDate:string, logTime:string) {
   const hour = logTime.split(':')[0]
   const minute = logTime.split(':')[1]
   const second = ref(logTime.split(':')[2])
-  console.log(second.value)
   const second2 = second.value.split('.')[0]
-  console.log(second2)
   switch (monthStr.value) {
-    case "Jan": {
+    case 'Jan': {
       month.value = 1
       break
     }
-    case "Feb": {
+    case 'Feb': {
       month.value = 2
       break
     }
-    case "Mar": {
+    case 'Mar': {
       month.value = 3
       break
     }
-    case "Apr": {
+    case 'Apr': {
       month.value = 4
       break
     }
-    case "May": {
+    case 'May': {
       month.value = 5
       break
     }
-    case "Jun": {
+    case 'Jun': {
       month.value = 6
       break
     }
-    case "Jul": {
+    case 'Jul': {
       month.value = 7
       break
     }
-    case "Aug": {
+    case 'Aug': {
       month.value = 8
       break
     }
-    case "Sept": {
+    case 'Sept': {
       month.value = 9
       break
     }
-    case "Oct": {
+    case 'Oct': {
       month.value = 10
       break
     }
-    case "Nov": {
+    case 'Nov': {
       month.value = 11
       break
     }
-    case "Dec": {
+    case 'Dec': {
       month.value = 12
       break
     }
     default: {
-      console.log("非法输入")
+      console.log('非法输入')
       break
     }
   }
@@ -200,8 +275,11 @@ const checkdate = async (date: string) => {
     alert('时间选择无效')
   }
 }
-const changeSort = async () => {
+const changeSort = async (type: string) => {
+  console.log(type)
+  direction.value = type
   getLogInfoQuery.value.direction = toggleSort.value
+  console.log(getLogInfoQuery.value)
   logList.value = []
   await getObsloginfo()
 }
@@ -293,7 +371,9 @@ const getDayAll = async (starDay: string, endDay: string) => {
   }
   return dates
 }
-const option = {
+const mapRef = ref()
+const chartData = ref([])
+const option = computed(() => ({
   title: {
     text: '趋势'
   },
@@ -327,35 +407,53 @@ const option = {
       name: '记录数',
       type: 'line',
       stack: 'Total',
-      data: [220, 230, 222, 234, 233, 250, 290, 220, 230, 222, 234, 233, 250, 290, 220, 230, 222, 234, 233, 250, 290]
+      symbol: 'none',
+      data: chartData.value
     }
   ]
-}
+}))
 // 动态目录
 const test2 = ref<any[]>([])
-onMounted(async () => {
-  await getHttpCategroyList()
-  await getObsloginfo()
-  await getDayAll(dateFrom.value.toString() + ' ' + '00:00:00', dateFrom.value.toString() + ' ' + '23:59:59')
-  const chartDom = document.getElementById('main')!
-  const myChart = echarts.init(chartDom)
-  await myChart.setOption(option)
-  option && myChart.setOption(option)
-  myChart.resize({
-    width: 1230,
-    height: 400
+let smallIndex = 0
+const dateStampStr = Number(new Date(new Date().toLocaleDateString()).getTime()) / 1000
+let startTimeFormatter = dateStampStr
+const changeData = () => {
+  const formattedString = date.formatDate(dateFrom.value, 'X')
+  startTimeFormatter = Number(formattedString) - 28800
+}
+const getTrendChartData = async (start: number, hostId: string | number) => {
+  mapRef.value.chartStartLoading()
+  const trendRes = await aiops.log.http.getDnsStatistics({ query: { start, host: hostId } })
+  trendRes.data.results.forEach((item) => {
+    chartData.value.unshift(item.count)
   })
-})
+  mapRef.value.chartStopLoading()
+}
+const search1 = () => {
+  chartData.value = []
+  getTrendChartData(startTimeFormatter, bigTabList.value[smallIndex].id)
+}
 //
-const changeSmallTab = async (name: string, id: number) => {
+const changeSmallTab = async (name: string, id: number, index: number) => {
+  chartData.value = []
+  smallIndex = index
+  dnsLogQuery.value.host_id = id
   activeItem2.value = name
   getLogInfoQuery.value.host_id = id
   logList.value = []
   await getObsloginfo()
+  await getTrendChartData(startTimeFormatter, id)
 }
 const changePageSize = () => {
   paginationTable.value.page = 1
 }
+onMounted(async () => {
+  chartData.value = []
+  await getHttpCategroyList()
+  await getObsloginfo()
+  await getDayAll(dateFrom.value.toString() + ' ' + '00:00:00', dateFrom.value.toString() + ' ' + '23:59:59')
+  await getTrendChartData(dateStampStr, bigTabList.value[smallIndex].id)
+})
 
 </script>
 
@@ -376,8 +474,9 @@ const changePageSize = () => {
                 </div>
               </div>
               <q-separator/>
-              <div class="row justify-start q-mt-lg ">
-                <div id="main" class="col-12">
+              <div class="row q-mt-lg ">
+                <div class="col">
+                  <line-chart :option="option" ref="mapRef"/>
                 </div>
               </div>
               <div class="row justify-start q-mt-lg ">
@@ -387,7 +486,7 @@ const changePageSize = () => {
                       <template v-slot:prepend>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                            <q-date minimal v-model="dateFrom" mask="YYYY-MM-DD">
+                            <q-date minimal v-model="dateFrom" mask="YYYY-MM-DD" @update:model-value="changeData">
                               <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="确定" color="primary" flat/>
                               </div>
@@ -397,7 +496,7 @@ const changePageSize = () => {
                       </template>
                     </q-input>
                   </div>
-                  <q-btn class="col-2 q-ml-md"  outline label="看趋势" @click="search(dateFrom)" dense/>
+                  <q-btn class="col-2 q-ml-md"  outline label="看趋势" @click="search1" dense/>
                   <div class="col-4 q-ml-lg">
                     <q-input filled dense v-model="timeFrom" >
                       <template v-slot:append>
@@ -440,7 +539,7 @@ const changePageSize = () => {
                   active-bg-color="grey-3"
                   style="width: 16%"
                 >
-                  <q-tab :activeItem2 ="item1?.name"  :name="item1?.name" v-for=" (item1, index2) in  bigTabList" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1?.name" @click="changeSmallTab(item1?.name, item1.id)"
+                  <q-tab :activeItem2 ="item1?.name"  :name="item1?.name" v-for=" (item1, index2) in  bigTabList" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1?.name" @click="changeSmallTab(item1?.name, item1.id, index2)"
                          :key="index2" no-caps>
                   </q-tab>
                 </q-tabs>
@@ -487,12 +586,19 @@ const changePageSize = () => {
                     </div>
                     <div class="text-grey q-mt-lg row justify-start q-mb-lg">
                       <div class="row col-12  justify-start ">
-                        <div class="col-4 justify-start row ">
-                          <span class="q-ml-xl q-pt-sm q-pr-md " >共{{ paginationTable.count }}条数据</span>
-                          <q-select class="q-pt-none" color="grey" v-model="paginationTable.rowsPerPage" :options="[100,200,300]" dense options-dense
-                                    borderless @update:model-value="changePageSize">
-                          </q-select>
-                          <span class="q-pt-sm ">页</span>
+                        <div class="col-4 row items-center">
+                          <div>
+                            <span>共</span>
+                            <span class="text-subtitle1 q-px-xs text-weight-bold">{{ paginationTable.count }}</span>
+                            <span>条数据</span>
+                          </div>
+                          <div class="row q-ml-md items-center">
+                            <span>每页</span>
+                            <q-select color="grey" v-model="paginationTable.rowsPerPage" :options="[100,200,300]" dense options-dense
+                                      borderless @update:model-value="changePageSize">
+                            </q-select>
+                            <span>条</span>
+                          </div>
                         </div>
                         <q-pagination
                           v-model="paginationTable.page"
@@ -501,7 +607,6 @@ const changePageSize = () => {
                           direction-links
                           outline
                           :ripple="false"
-                          @click="changePagination"
                           class="col-8 justify-end q-pr-lg"
                         />
                       </div>
