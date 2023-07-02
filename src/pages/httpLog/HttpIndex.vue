@@ -19,6 +19,7 @@ interface getLogInfoTabListInterface {
 }
 const dnsQuery = ref<HttpCategroyQueryInterface>({
 })
+const mapRef = ref()
 const bigTabList = ref<any[]>([])
 const test1 = ref()
 const getHttpCategroyList = async () => {
@@ -247,10 +248,10 @@ const getDayAll = async (starDay: string, endDay: string) => {
     const day = time.getDate() >= 10 ? time.getDate() : ('0' + time.getDate())
     const hour = time.getHours() >= 10 ? time.getHours() : ('0' + time.getHours())
     const minutes = time.getMinutes() >= 10 ? time.getMinutes() : ('0' + time.getMinutes())
-    const YYMMDD = year + '-' + mouth + '-' + day + ' ' + hour + ':' + minutes
+    // const YYMMDD = year + '-' + mouth + '-' + day + ' ' + hour + ':' + minutes
+    const YYMMDD = hour + ':' + minutes
     dates.value.push(YYMMDD)
   }
-  console.log('datesArray', dates)
   return dates
 }
 const chartData = ref([])
@@ -293,13 +294,15 @@ const option = computed(() => ({
   ]
 }))
 // 动态目录
-const test2 = ref<any[]>([])
+const test2: any = ref<>([])
 const dateStampStr = new Date(new Date().toLocaleDateString()).getTime()
 const getTrendChartData = async (start: number, hostId: string) => {
+  mapRef.value.chartStartLoading()
   const trendRes = await aiops.log.http.getLogStatistics({ query: { start, host: hostId } })
   trendRes.data.results.forEach((item) => {
-    chartData.value.push(item.count)
+    chartData.value.unshift(item.count)
   })
+  mapRef.value.chartStopLoading()
 }
 const changeBigTabIndex = (index: number, descname: string) => {
   chartData.value = []
@@ -374,7 +377,7 @@ const changePageSize = () => {
         <q-separator/>
               <div class="row q-mt-lg ">
                 <div class="col">
-                  <line-chart :option="option"/>
+                  <line-chart :option="option" ref="mapRef"/>
                 </div>
               </div>
               <div class="row justify-start q-mt-lg ">

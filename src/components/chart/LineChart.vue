@@ -33,10 +33,22 @@ const props = defineProps({
     required: true
   }
 })
+// eslint-disable-next-line
+let chart: any = null
+const chartStartLoading = () => {
+  chart.showLoading({
+    text: '数据正在加载...',
+    textStyle: { fontSize: 30, color: '#444' },
+    effectOption: { backgroundColor: 'rgba(0, 0, 0, 0)' }
+  })
+}
+const chartStopLoading = () => {
+  chart.hideLoading()
+}
+defineExpose({ chartStartLoading, chartStopLoading })
 const container = ref<HTMLElement>()
-// defineExpose({ })
 onMounted(() => {
-  const chart = echarts.init(container.value!)
+  chart = echarts.init(container.value!)
   chart.setOption(props.option)
   const { option } = toRefs(props)
   watch(option, () => {
