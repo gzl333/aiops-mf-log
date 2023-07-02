@@ -14,7 +14,7 @@ interface getLogInfoTabListInterface {
   end?: number;
   direction?: string;
   limit?: string;
-  host?: number;
+  host_id?: number;
 }
 const dnsQuery = ref<HttpCategroyQueryInterface>({
 })
@@ -22,6 +22,7 @@ const bigTabList = ref<any[]>([])
 const getHttpCategroyList = async () => {
   await aiops.log.dns.getdnslogtype({ query: dnsQuery.value }).then((res) => {
     bigTabList.value = res.data.results
+    activeItem2.value = bigTabList?.value[0].name
   })
 }
 // 时间处理
@@ -52,7 +53,7 @@ const getLogInfoQuery = ref<getLogInfoTabListInterface>({
   direction: toggleSort.value,
   start: Math.floor(new Date(dateFrom.value + ' ' + timeFrom.value).getTime() * 1000000 - 1000000000),
   end: Math.floor(new Date(dateFrom.value + ' ' + timeFrom.value).getTime() * 1000000),
-  host: 30001
+  host_id: 30001
 })
 // 数据表字段设计
 const dnsLogColumns = computed(() => [
@@ -73,41 +74,17 @@ interface logInfoInterface {
   response_result?: string | undefined
   response_result_list?: string[] | undefined
 }
-interface logQueryInterface {
-  direction?: string;
-  host?: number;
-  limit?: number;
-  start?: number;
-  end?: number;
-}
-const direction = ref<string>('forward')
-const hostid = ref<number>(30001)
-const limit = ref<number>(2)
-const start = ref<number>(1688201100)
-const end = ref<number>(1688201197)
-const dnsLogQuery = ref<logQueryInterface>({
-  direction: direction.value,
-  host: hostid.value,
-  limit: limit.value,
-  start: start.value,
-  end: end.value
-})
 const allResult = ref()
-const logList = ref<logInfoInterface[]>()
+const logList = ref<logInfoInterface[]>([])
 function parseAllResult (res:any) {
-  console.log('res9999999999', res)
-  console.log('res length', res.length)
   for (let i = 0; i < res.length; i++) {
     const logInfo = res[i][1]
-    console.log('res i', res[i][1])
-    console.log('logInfo', logInfo)
     logList?.value?.push(parseSingleLog(logInfo))
   }
-  console.log('loglist9999999999', logList)
 }
 function parseSingleLog (value:string) {
   const logData = ref<logInfoInterface>({})
-  const valueList = value.split('')
+  const valueList = value.split(' ')
   logData.value.time = logTime2Datetime(valueList[2], valueList[3])
   logData.value.client_ip = valueList[5]
   logData.value.query_domain = valueList[9]
@@ -138,9 +115,9 @@ function logTime2Datetime (logDate:string, logTime:string) {
   const hour = logTime.split(':')[0]
   const minute = logTime.split(':')[1]
   const second = ref(logTime.split(':')[2])
-  console.log('second', second)
+  console.log(second.value)
   const second2 = second.value.split('.')[0]
-  console.log('second2', second2)
+  console.log(second2)
   switch (monthStr.value) {
     case "Jan": {
       month.value = 1
@@ -203,25 +180,13 @@ const paginationTable = ref({
   count: 0,
   rowsPerPage: 100
 })
-interface resultInterface {
-  real_ip: string,
-  datetime: number,
-  user_ip: string,
-  // bucket: string,
-  status: number,
-  req_bytes: number,
-  res_bytes: number,
-  type: string,
-  http_referer: string
-}
-const nginxLogTableRow = ref<resultInterface[]>()
+const nginxLogTableRow = ref<any[]>()
 const getObsloginfo = async () => {
   await aiops.log.dns.getlogdnsinfo({ query: getLogInfoQuery.value }).then((res) => {
     allResult.value = res.data.result
-    // parseAllResult(allResult.value)
-    // paginationTable.value.count = res.data.count
-    // console.log('allResult.value ', allResult.value)
-    // console.log('loglist.value ', logList.value)
+    parseAllResult(allResult.value)
+    paginationTable.value.count = logList.value.length
+    nginxLogTableRow.value = logList.value
   })
 }
 // 表单筛选
@@ -234,7 +199,6 @@ const checkdate = async (date: string) => {
   if (new Date(date) > new Date(currentDate)) {
     alert('时间选择无效')
   }
-  console.log('dateFromchange', date)
 }
 const changeSort = async () => {
   getLogInfoQuery.value.direction = toggleSort.value
@@ -254,12 +218,10 @@ const search = async () => {
   } else if (modelTimeUnit.value.value === 'hour') {
     startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 60 * 1000
   }
-  console.log('startString', startString)
   getLogInfoQuery.value.start = startString.value * 1000000
   getLogInfoQuery.value.end = Math.floor(endString.value.getTime() * 1000000)
   logList.value = []
   await getObsloginfo()
-  console.log('Echarts', nginxLogTableRow.value)
 }
 
 const timeOption = [
@@ -329,7 +291,6 @@ const getDayAll = async (starDay: string, endDay: string) => {
     const YYMMDD = year + '-' + mouth + '-' + day + ' ' + hour + ':' + minutes
     dates.value.push(YYMMDD)
   }
-  console.log('datesArray', dates)
   return dates
 }
 const option = {
@@ -387,9 +348,8 @@ onMounted(async () => {
 })
 //
 const changeSmallTab = async (name: string, id: number) => {
-  console.log('changeSmallTabid', id)
   activeItem2.value = name
-  getLogInfoQuery.value.host = id
+  getLogInfoQuery.value.host_id = id
   logList.value = []
   await getObsloginfo()
 }
@@ -413,17 +373,6 @@ const changePageSize = () => {
               </div>
               <div class="row">
                 <div class="col">
-<!--                  <q-tabs-->
-<!--                    v-model="activeItem"-->
-<!--                    inline-label-->
-<!--                    align="left"-->
-<!--                    indicator-color="primary"-->
-<!--                    active-color="primary"-->
-<!--                  >-->
-<!--                    <q-tab no-caps :name="item?.desc_name" v-model="test1" v-for=" (item, index) in bigTabList" class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item?.desc_name"-->
-<!--                           :key="index"   style="width: 13%" @click="changeBigTabIndex(index,item.desc_name)">-->
-<!--                    </q-tab>-->
-<!--                  </q-tabs>-->
                 </div>
               </div>
               <q-separator/>
@@ -505,7 +454,7 @@ const changePageSize = () => {
                         id="StorageMeteringTable"
                         card-class="no-padding"
                         table-header-class="bg-grey-1 text-grey"
-                        :rows="logList"
+                        :rows="nginxLogTableRow"
                         :columns= "dnsLogColumns"
                         row-key="name"
                         color="primary"
@@ -517,18 +466,16 @@ const changePageSize = () => {
                       >
                         <template v-slot:body="props">
                           <q-tr :props="props">
-                            <q-td class="no-padding"  key="sort" :props="props" :label="toggleSort">
+                            <q-td class="no-padding"  key="query_time" :props="props" :label="toggleSort">
                               {{ props.row.time }}
                             </q-td>
-<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">{{ fromatTime(props.row.creation_time.slice(1, -1))}}</q-td>-->
-<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props" style="white-space:normal;">{{ props.row.user_ip }}</q-td>-->
-<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.real_ip}}</q-td>-->
-<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>-->
-<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>-->
-<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>-->
-<!--                            <q-td  :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">-->
-<!--                              {{ props.row.request_info }}-->
-<!--                            </q-td>-->
+                            <q-td  :class="['my-table-cell']" class="no-padding" key="client_ip" :props="props" style="white-space:normal;">{{ props.row.client_ip}}</q-td>
+                            <q-td  :class="['my-table-cell']" class="no-padding" key="query_domain" :props="props" >{{ props.row.query_domain}}</q-td>
+                            <q-td  :class="['my-table-cell']" class="no-padding" key="query_type" :props="props">{{ props.row.query_type}}</q-td>
+                            <q-td  :class="['my-table-cell']" class="no-padding" key="response_type" :props="props">{{ props.row.response_type}}</q-td>
+                            <q-td  :class="['my-table-cell1']" class="no-padding" key="response_result" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">
+                              {{ props.row.response_result }}
+                            </q-td>
                           </q-tr>
                         </template>
                         <template v-slot:top-right>

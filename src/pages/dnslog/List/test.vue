@@ -371,15 +371,15 @@ onMounted(async () => {
                             <q-td class="no-padding"  key="sort" :props="props" :label="toggleSort">
                               {{ props.row.time }}
                             </q-td>
-                            <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">{{ fromatTime(props.row.creation_time.slice(1, -1))}}</q-td>-->
-                            <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props" style="white-space:normal;">{{ props.row.user_ip }}</q-td>-->
-                            <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.real_ip}}</q-td>-->
-                            <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>-->
-                            <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>-->
-                            <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>-->
-                            <!--                            <q-td  :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">-->
-                            <!--                              {{ props.row.request_info }}-->
-                            <!--                            </q-td>-->
+                                                        <q-td  :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">{{ fromatTime(props.row.creation_time.slice(1, -1))}}</q-td>
+                                                        <q-td  :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props" style="white-space:normal;">{{ props.row.user_ip }}</q-td>
+                                                        <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.real_ip}}</q-td>
+                                                        <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>
+                                                        <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>
+                                                        <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>
+                                                        <q-td  :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">
+                                                          {{ props.row.request_info }}
+                                                        </q-td>
                           </q-tr>
                         </template>
                         <template v-slot:top-right>
